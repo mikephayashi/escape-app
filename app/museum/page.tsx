@@ -348,7 +348,7 @@ export default function MuseumPage() {
         <>
           {/* Overlay to block clicks on everything except the next button */}
           <div className="pointer-events-auto absolute inset-0 z-[25]" />
-          <NextButton href="/office" className="z-30" />
+          <NextButton href="/speakeasy-entrance" className="z-30" />
         </>
       ) : null}
     </main>
