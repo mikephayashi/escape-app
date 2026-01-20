@@ -288,8 +288,8 @@ export default function MuseumPage() {
             type="button"
             aria-label="Paper Trash"
             className="pointer-events-auto"
-            left="20%"
-            top="55%"
+            left="75%"
+            top="70%"
             width="25%"
             aspectRatio="1536 / 1024"
             onClick={() => {
