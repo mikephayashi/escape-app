@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import TypewriterText from "../components/TypewriterText";
@@ -24,6 +24,7 @@ export default function LivingRoomPage() {
   const [safeSolved, setSafeSolved] = useState(false);
   const [flashColor, setFlashColor] = useState<"green" | "red" | null>(null);
   const [fossilRevealed, setFossilRevealed] = useState(false);
+  const [livingRoomHintVisible, setLivingRoomHintVisible] = useState(false);
 
   const triggerFlash = (color: "green" | "red") => {
     setFlashColor(color);
@@ -99,6 +100,12 @@ export default function LivingRoomPage() {
     </div>
   );
 
+  useEffect(() => {
+    if (!zoomedItem || zoomedItem.alt !== "Sticky note") {
+      setLivingRoomHintVisible(false);
+    }
+  }, [zoomedItem]);
+
   return (
     <main
       className="relative min-h-screen w-full bg-cover bg-center"
@@ -121,6 +128,7 @@ export default function LivingRoomPage() {
           });
           return;
         }
+        setLivingRoomHintVisible(false);
         setDialog((current) => ({ ...current, isVisible: false }));
         setZoomedItem(null);
       }}
@@ -130,6 +138,19 @@ export default function LivingRoomPage() {
           className={`pointer-events-none absolute inset-0 z-30 ${
             flashColor === "green" ? "bg-green-300/70" : "bg-red-400/70"
           }`}
+        />
+      ) : null}
+      {livingRoomHintVisible && zoomedItem?.alt === "Sticky note" ? (
+        <div
+          className="pointer-events-auto absolute inset-0 z-40 bg-black/50"
+          onPointerDown={(event) => {
+            event.stopPropagation();
+            setLivingRoomHintVisible(false);
+          }}
+          onClick={(event) => {
+            event.stopPropagation();
+            setLivingRoomHintVisible(false);
+          }}
         />
       ) : null}
       <div className="pointer-events-none absolute inset-0 z-0">
@@ -221,8 +242,15 @@ export default function LivingRoomPage() {
       </div>
       {zoomedItem ? (
         <div
-          className="pointer-events-auto absolute left-1/2 top-1/2 z-20 w-[90%] max-w-sm -translate-x-1/2 -translate-y-1/2"
-          onPointerDown={(event) => event.stopPropagation()}
+          className={`pointer-events-auto absolute left-1/2 top-1/2 w-[90%] max-w-sm -translate-x-1/2 -translate-y-1/2 ${
+            livingRoomHintVisible && zoomedItem.alt === "Sticky note" ? "z-30" : "z-20"
+          }`}
+          onPointerDown={(event) => {
+            event.stopPropagation();
+            if (livingRoomHintVisible && zoomedItem.alt === "Sticky note") {
+              setLivingRoomHintVisible(false);
+            }
+          }}
         >
           <div className="relative w-full" style={{ aspectRatio: zoomedItem.aspectRatio }}>
             <Image
@@ -279,6 +307,46 @@ export default function LivingRoomPage() {
                 Open
               </button>
             </form>
+          ) : null}
+        </div>
+      ) : null}
+      {zoomedItem?.alt === "Sticky note" ? (
+        <div
+          className={`pointer-events-auto absolute ${
+            livingRoomHintVisible ? "z-50" : "z-30"
+          }`}
+          style={{ left: "0%", top: "0%", width: "30%", aspectRatio: "1024 / 1536" }}
+          onPointerDown={(event) => event.stopPropagation()}
+        >
+          <button
+            type="button"
+            aria-label="Living room hint"
+            className="relative h-full w-full"
+            onClick={() => setLivingRoomHintVisible((current) => !current)}
+          >
+            <Image
+              src="/pages/living-room/Light%20Bulb.png"
+              alt="Light bulb hint"
+              fill
+              sizes="30vw"
+              className="object-contain"
+              priority
+            />
+          </button>
+          {livingRoomHintVisible ? (
+            <div
+              className="pointer-events-none absolute z-50"
+              style={{ left: "20%", top: "0%", width: "300%", aspectRatio: "1024 / 1536" }}
+            >
+              <Image
+                src="/pages/living-room/Living%20Room%20Hint.svg"
+                alt="Living room hint"
+                fill
+                sizes="30vw"
+                className="object-contain"
+                priority
+              />
+            </div>
           ) : null}
         </div>
       ) : null}
