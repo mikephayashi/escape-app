@@ -9,6 +9,7 @@ A mobile-first escape room prototype built with Next.js and Tailwind CSS.
 
 # TODOs
 - Background music
+- Add the trichael asset
 
 ## Requirements
 
