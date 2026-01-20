@@ -4,6 +4,7 @@ A mobile-first escape room prototype built with Next.js and Tailwind CSS.
 
 # Open Issues
 - Font
+- Positioning?
 
 ## Requirements
 
