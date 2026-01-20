@@ -6,12 +6,12 @@ export default function StartPage() {
     <main
       className="relative flex min-h-screen w-full items-end justify-center bg-cover bg-center pb-6"
       style={{
-        backgroundImage: "url('/shared/backgrounds/island-background.png')",
+        backgroundImage: "url('/assets/shared/backgrounds/island-background.png')",
       }}
     >
       <Link href="/island">
         <Image
-          src="/shared/ui/Start%20Button.svg"
+          src="/assets/shared/ui/Start%20Button.svg"
           alt="Start Game"
           width={600}
           height={200}
