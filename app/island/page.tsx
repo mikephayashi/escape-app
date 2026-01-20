@@ -1,13 +1,12 @@
- "use client";
+"use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import BillyDialog from "../components/BillyDialog";
 import NextButton from "../components/NextButton";
 
 export default function IslandPage() {
   const router = useRouter();
-  const [isPromptComplete, setIsPromptComplete] = useState(false);
   const [isNameInputVisible, setIsNameInputVisible] = useState(false);
   const [name, setName] = useState("");
   const [stage, setStage] = useState<"intro" | "wakeup" | "choices">("intro");
@@ -19,15 +18,7 @@ export default function IslandPage() {
   );
   const [isBillyVisible] = useState(true);
 
-  useEffect(() => {
-    setIsPromptComplete(false);
-  }, [dialogText]);
-
   const handleScreenTap = () => {
-    if (!isPromptComplete) {
-      return;
-    }
-
     if (stage === "wakeup") {
       setStage("choices");
       setDialogText("Where do you want to go?");
@@ -78,7 +69,7 @@ export default function IslandPage() {
           text={dialogText}
           characterImageVisible={isBillyVisible}
           className="mt-6 max-w-sm"
-          onComplete={() => setIsPromptComplete(true)}
+          onDialogClick={handleScreenTap}
           choiceButtons={{
             isVisible: stage === "choices",
             primaryLabel: "House.",

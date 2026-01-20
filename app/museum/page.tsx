@@ -78,45 +78,23 @@ export default function MuseumPage() {
       onPointerDown={handleScreenTap}
     >
       <div className="mx-auto flex min-h-screen w-full max-w-md flex-col items-center px-4 pt-16">
-        {stage === "entrance" && dialogText ? (
-          <div
-            className={`mb-4 flex w-full justify-center transition-opacity duration-500 ${
-              dialogText ? "opacity-100" : "opacity-0"
-            }`}
-            aria-hidden={!dialogText}
-          >
-            <Image
-              src={dialogImages[dialogIndex]}
-              alt={dialogIndex === 0 ? "Fossil" : "Museum ticket"}
-              width={240}
-              height={240}
-              className="h-auto w-40"
-              priority
-            />
-          </div>
-        ) : null}
-        {false ? (
-          <div
-            className={`transition-opacity duration-500 ${
-              dialogText ? "opacity-100" : "opacity-0"
-            }`}
-            aria-hidden={!dialogText}
-          >
-            <Image
-              src="/assets/shared/characters/Billy.svg"
-              alt="Blathers"
-              width={220}
-              height={220}
-              className="h-auto w-44"
-              priority
-            />
-          </div>
-        ) : null}
         <DialogBox
           text={dialogText}
           speaker="Blathers"
           className="mt-6 max-w-sm"
           onComplete={() => setIsPromptComplete(true)}
+          characterImage={
+            stage === "entrance" && dialogText
+              ? {
+                  src: dialogImages[dialogIndex],
+                  alt: dialogIndex === 0 ? "Fossil" : "Museum ticket",
+                  width: 240,
+                  height: 240,
+                  className: "h-auto w-40",
+                  priority: true,
+                }
+              : undefined
+          }
         />
       </div>
       {stage === "inside" ? <NextButton href="/office" /> : null}

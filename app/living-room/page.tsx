@@ -74,30 +74,6 @@ export default function LivingRoomPage() {
     <main
       className="relative min-h-screen w-full bg-cover bg-center"
       style={{ backgroundImage: "url('/assets/scenes/living-room/Living%20Room%20Empty.png')" }}
-      onPointerDown={() => {
-        // When safe is solved but fossil not yet revealed, any click reveals it
-        if (safeSolved && !fossilRevealed) {
-          setFossilRevealed(true);
-          setZoomedItem({
-            src: "/assets/scenes/living-room/Fossil.png",
-            alt: "Fossil",
-            aspectRatio: "1024 / 1024",
-          });
-          showDialog({
-            key: "fossil",
-            text: "Wow a fossil. We can give this to Blathers.",
-            showBilly: false,
-            showBackground: true,
-            useTypewriter: false,
-            speaker: "",
-          });
-          return;
-        }
-        // Only dismiss initial dialog when no zoomed item (overlay handles zoomed dismissal)
-        if (!zoomedItem) {
-          setDialog((current) => ({ ...current, isVisible: false }));
-        }
-      }}
     >
       {flashColor ? (
         <div
@@ -183,6 +159,24 @@ export default function LivingRoomPage() {
         <div
           className="pointer-events-auto absolute inset-0 z-[15] bg-black/40"
           onClick={() => {
+            // When safe is solved but fossil not yet revealed, reveal fossil instead of dismissing
+            if (safeSolved && !fossilRevealed) {
+              setFossilRevealed(true);
+              setZoomedItem({
+                src: "/assets/scenes/living-room/Fossil.png",
+                alt: "Fossil",
+                aspectRatio: "1024 / 1024",
+              });
+              showDialog({
+                key: "fossil",
+                text: "Wow a fossil. We can give this to Blathers.",
+                showBilly: false,
+                showBackground: true,
+                useTypewriter: false,
+                speaker: "",
+              });
+              return;
+            }
             setLivingRoomHintVisible(false);
             setDialog((current) => ({ ...current, isVisible: false }));
             setZoomedItem(null);
@@ -474,11 +468,16 @@ export default function LivingRoomPage() {
             showBackground={dialog.showBackground}
             useTypewriter={dialog.useTypewriter}
             className="mt-6 max-w-sm"
+            onDialogClick={() => setDialog((current) => ({ ...current, isVisible: false }))}
           />
         </div>
       ) : null}
       {fossilRevealed && !dialog.isVisible && dialog.key === "fossil" ? (
-        <NextButton href="/museum" className="z-20" />
+        <>
+          {/* Overlay to block clicks on everything except the next button */}
+          <div className="pointer-events-auto absolute inset-0 z-[25]" />
+          <NextButton href="/museum" className="z-30" />
+        </>
       ) : null}
     </main>
   );

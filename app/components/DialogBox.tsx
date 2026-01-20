@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import TypewriterText from "./TypewriterText";
 import ChoiceButtons from "./ChoiceButtons";
@@ -46,9 +47,38 @@ type DialogBoxProps = {
   onDialogClick?: () => void;
 };
 
-export function DialogOverlay({ isVisible }: { isVisible?: boolean }) {
+export function DialogOverlay({
+  isVisible,
+  onClick,
+  blockInteractions = false,
+}: {
+  isVisible?: boolean;
+  onClick?: () => void;
+  blockInteractions?: boolean;
+}) {
+  // Block pointer events if:
+  // 1. There's a click handler (user can dismiss by clicking)
+  // 2. blockInteractions is true (e.g., typewriter still running)
+  const shouldBlock = Boolean(onClick) || blockInteractions;
+
   return isVisible ? (
-    <div className="pointer-events-none fixed inset-0 z-10 bg-black/40" aria-hidden />
+    <div
+      className={`fixed inset-0 z-10 bg-black/40 ${shouldBlock ? "pointer-events-auto" : "pointer-events-none"}`}
+      aria-hidden
+      onClick={
+        onClick
+          ? (event) => {
+              event.stopPropagation();
+              onClick();
+            }
+          : shouldBlock
+            ? (event) => {
+                event.stopPropagation();
+              }
+            : undefined
+      }
+      onPointerDown={shouldBlock ? (event) => event.stopPropagation() : undefined}
+    />
   ) : null;
 }
 
@@ -67,32 +97,51 @@ export default function DialogBox({
   inputBox,
   onDialogClick,
 }: DialogBoxProps) {
+  const [isTypewriterComplete, setIsTypewriterComplete] = useState(!useTypewriter);
+
+  // Reset completion state when text changes or typewriter setting changes
+  useEffect(() => {
+    setIsTypewriterComplete(!useTypewriter);
+  }, [text, useTypewriter]);
+
+  const handleTypewriterComplete = () => {
+    setIsTypewriterComplete(true);
+    onComplete?.();
+  };
+
+  // Only allow dismissing when typewriter is complete
+  const canDismiss = isTypewriterComplete && onDialogClick;
+
   const isDialogVisible = isVisible ?? Boolean(text);
   const isCharacterVisible = characterImage
     ? characterImage.isVisible ?? isDialogVisible
     : false;
   const dialogContent = isDialogVisible
     ? useTypewriter
-      ? <TypewriterText text={text} onComplete={onComplete} />
+      ? <TypewriterText text={text} onComplete={handleTypewriterComplete} />
       : text
     : null;
 
   return (
     <>
-      {showOverlay ? <DialogOverlay isVisible={isDialogVisible} /> : null}
+      {showOverlay ? <DialogOverlay isVisible={isDialogVisible} onClick={canDismiss ? onDialogClick : undefined} blockInteractions={!isTypewriterComplete} /> : null}
       {showDialog ? (
         <>
           {characterImage ? (
             <div
               className={`relative z-20 mb-4 flex justify-center overflow-visible transition-opacity duration-500 ${
-                isCharacterVisible ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+                isCharacterVisible && canDismiss ? "pointer-events-auto opacity-100" : isCharacterVisible ? "pointer-events-none opacity-100" : "pointer-events-none opacity-0"
               } ${characterImage.containerClassName ?? ""}`}
               aria-hidden={!isCharacterVisible}
-              onClick={(event) => {
-                event.stopPropagation();
-                onDialogClick?.();
-              }}
-              onPointerDown={(event) => event.stopPropagation()}
+              onClick={
+                canDismiss
+                  ? (event) => {
+                      event.stopPropagation();
+                      onDialogClick();
+                    }
+                  : undefined
+              }
+              onPointerDown={canDismiss ? (event) => event.stopPropagation() : undefined}
             >
               <Image
                 src={characterImage.src}
@@ -106,10 +155,18 @@ export default function DialogBox({
           ) : null}
           <div
             className={`relative z-20 w-full transition-opacity duration-500 ${
-              isDialogVisible ? "opacity-100" : "pointer-events-none opacity-0"
+              isDialogVisible && canDismiss ? "opacity-100" : isDialogVisible ? "pointer-events-none opacity-100" : "pointer-events-none opacity-0"
             } ${className}`}
             aria-hidden={!isDialogVisible}
-            onClick={onDialogClick}
+            onClick={
+              canDismiss
+                ? (event) => {
+                    event.stopPropagation();
+                    onDialogClick();
+                  }
+                : undefined
+            }
+            onPointerDown={canDismiss ? (event) => event.stopPropagation() : undefined}
           >
             <div className="relative w-full">
               {showBackground ? (
