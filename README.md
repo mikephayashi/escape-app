@@ -33,5 +33,8 @@ Open `http://localhost:3000`.
 
 - `app/page.tsx` - main screen
 - `app/island/page.tsx` - island screen
-- `public/main-background.png` - main background image
-- `public/island-background.png` - island background image
+- `public/shared/backgrounds/island-background.png` - shared island background
+- `public/shared/ui/Start Button.svg` - shared start button
+- `public/pages/house/House.png` - house screen background
+- `public/pages/living-room/Living Room.png` - living room background
+- `public/unused/main-background.png` - unused main background image

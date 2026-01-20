@@ -3,7 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 
 const finkHeavy = localFont({
-  src: "../public/FinkHeavy.ttf",
+  src: "../public/shared/fonts/FinkHeavy.ttf",
   variable: "--font-fink-heavy",
 });
 

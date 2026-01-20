@@ -3,40 +3,17 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import TypewriterTextBase from "../components/TypewriterText";
 
-function TypewriterText({
-  text,
-  intervalMs = 40,
-  onComplete,
-}: {
-  text: string;
-  intervalMs?: number;
-  onComplete?: () => void;
-}) {
-  const [visibleText, setVisibleText] = useState("");
-
-  useEffect(() => {
-    let index = 0;
-    setVisibleText("");
-    const timer = window.setInterval(() => {
-      index += 1;
-      setVisibleText(text.slice(0, index));
-      if (index >= text.length) {
-        window.clearInterval(timer);
-        onComplete?.();
-      }
-    }, intervalMs);
-
-    return () => window.clearInterval(timer);
-  }, [text, intervalMs, onComplete]);
-
-  return <span>{visibleText}</span>;
+function TypewriterText(props: Parameters<typeof TypewriterTextBase>[0]) {
+  return <TypewriterTextBase {...props} />;
 }
 
 export default function HousePage() {
   const router = useRouter();
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [backgroundImage, setBackgroundImage] = useState("/House.png");
+  const [backgroundImage, setBackgroundImage] =
+    useState("/pages/house/House.png");
   const [isBillyVisible, setIsBillyVisible] = useState(false);
   const [dialogText, setDialogText] = useState("");
   const [isPromptComplete, setIsPromptComplete] = useState(false);
@@ -108,7 +85,7 @@ export default function HousePage() {
     setStage("houseOpen");
     setIsBillyVisible(false);
     setDialogText("");
-    setBackgroundImage("/House%20Open.png");
+    setBackgroundImage("/pages/house/House%20Open.png");
   };
 
   return (
@@ -119,7 +96,7 @@ export default function HousePage() {
     >
       <audio
         ref={audioRef}
-        src="/Villager%20Talking%20Sound.m4a"
+        src="/shared/audio/Villager%20Talking%20Sound.m4a"
         preload="auto"
       />
       <div className="mx-auto flex min-h-screen w-full max-w-md flex-col items-center px-4 pt-16">
@@ -130,7 +107,7 @@ export default function HousePage() {
           aria-hidden={!isBillyVisible}
         >
           <Image
-            src="/Billy.svg"
+            src="/shared/characters/Billy.svg"
             alt="Billy"
             width={220}
             height={220}
@@ -145,7 +122,7 @@ export default function HousePage() {
           aria-hidden={!dialogText}
         >
           <Image
-            src="/Text%20Background.svg"
+            src="/shared/ui/Text%20Background.svg"
             alt="Dialog background"
             width={360}
             height={210}

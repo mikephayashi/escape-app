@@ -5,11 +5,13 @@ export default function StartPage() {
   return (
     <main
       className="relative flex min-h-screen w-full items-end justify-center bg-cover bg-center pb-6"
-      style={{ backgroundImage: "url('/island-background.png')" }}
+      style={{
+        backgroundImage: "url('/shared/backgrounds/island-background.png')",
+      }}
     >
       <Link href="/island">
         <Image
-          src="/Start Button.svg"
+          src="/shared/ui/Start%20Button.svg"
           alt="Start Game"
           width={600}
           height={200}
