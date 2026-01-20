@@ -4,12 +4,12 @@ A mobile-first escape room prototype built with Next.js and Tailwind CSS.
 
 # Open Issues
 - Font
-- Positioning?
- - Make sure empty space is clickable e.g. living rom with sticky note/miffy problematic
 
 # TODOs
 - Background music
-- Add the trichael asset
+- Add sound effects
+-- Unlocking sounds
+-- Fireworks at the end
 
 ## Requirements
 
