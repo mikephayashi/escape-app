@@ -2,6 +2,9 @@
 
 A mobile-first escape room prototype built with Next.js and Tailwind CSS.
 
+# Open Issues
+- Font
+
 ## Requirements
 
 - Node.js 18+ (recommended)
