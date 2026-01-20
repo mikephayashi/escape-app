@@ -22,6 +22,10 @@ export default function MuseumPage() {
   const [stage, setStage] = useState<"outside" | "entrance" | "inside">(
     "outside",
   );
+  const dialogImages: Record<number, string> = {
+    0: "/pages/living-room/Fossil.png",
+    1: "/pages/museum/Ticket.png",
+  };
 
   useEffect(() => {
     if (!dialogText) {
@@ -83,7 +87,7 @@ export default function MuseumPage() {
 
   return (
     <main
-      className="min-h-screen w-full bg-cover bg-center"
+      className="relative min-h-screen w-full bg-cover bg-center"
       style={{ backgroundImage: `url('${backgroundImage}')` }}
       onPointerDown={handleScreenTap}
     >
@@ -93,6 +97,23 @@ export default function MuseumPage() {
         preload="auto"
       />
       <div className="mx-auto flex min-h-screen w-full max-w-md flex-col items-center px-4 pt-16">
+        {stage === "entrance" && dialogText ? (
+          <div
+            className={`mb-4 flex w-full justify-center transition-opacity duration-500 ${
+              dialogText ? "opacity-100" : "opacity-0"
+            }`}
+            aria-hidden={!dialogText}
+          >
+            <Image
+              src={dialogImages[dialogIndex]}
+              alt={dialogIndex === 0 ? "Fossil" : "Museum ticket"}
+              width={240}
+              height={240}
+              className="h-auto w-40"
+              priority
+            />
+          </div>
+        ) : null}
         {false ? (
           <div
             className={`transition-opacity duration-500 ${
@@ -148,6 +169,24 @@ export default function MuseumPage() {
         >
           Next
         </Link>
+      ) : null}
+      {stage === "entrance" && isDialogComplete && !dialogText ? (
+        <div className="pointer-events-none absolute inset-0 z-20">
+          <div
+            className="absolute"
+            style={{ left: "24%", top: "20%", width: "50%", aspectRatio: "1 / 1" }}
+          >
+            <Image
+              src="/pages/museum/Arrow.png"
+              alt="Entrance arrow"
+              fill
+              sizes="14vw"
+              className="object-contain"
+              style={{ transform: "rotate(90deg)" }}
+              priority
+            />
+          </div>
+        </div>
       ) : null}
     </main>
   );

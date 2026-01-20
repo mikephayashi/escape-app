@@ -20,6 +20,17 @@ export default function LivingRoomPage() {
     alt: string;
     aspectRatio: string;
   } | null>(null);
+  const [safeInput, setSafeInput] = useState("");
+  const [safeSolved, setSafeSolved] = useState(false);
+  const [flashColor, setFlashColor] = useState<"green" | "red" | null>(null);
+  const [fossilRevealed, setFossilRevealed] = useState(false);
+
+  const triggerFlash = (color: "green" | "red") => {
+    setFlashColor(color);
+    window.setTimeout(() => {
+      setFlashColor(null);
+    }, 260);
+  };
 
   const showDialog = ({
     key,
@@ -93,10 +104,34 @@ export default function LivingRoomPage() {
       className="relative min-h-screen w-full bg-cover bg-center"
       style={{ backgroundImage: "url('/pages/living-room/Living%20Room%20Empty.png')" }}
       onPointerDown={() => {
+        if (safeSolved && !fossilRevealed) {
+          setFossilRevealed(true);
+          setZoomedItem({
+            src: "/pages/living-room/Fossil.png",
+            alt: "Fossil",
+            aspectRatio: "1024 / 1024",
+          });
+          showDialog({
+            key: "fossil",
+            text: "Wow a fossil. We can give this to Blathers.",
+            showBilly: false,
+            showBackground: true,
+            useTypewriter: false,
+            speaker: "",
+          });
+          return;
+        }
         setDialog((current) => ({ ...current, isVisible: false }));
         setZoomedItem(null);
       }}
     >
+      {flashColor ? (
+        <div
+          className={`pointer-events-none absolute inset-0 z-30 ${
+            flashColor === "green" ? "bg-green-300/70" : "bg-red-400/70"
+          }`}
+        />
+      ) : null}
       <div className="pointer-events-none absolute inset-0 z-0">
         <div
           className="absolute"
@@ -185,7 +220,10 @@ export default function LivingRoomPage() {
         </div>
       </div>
       {zoomedItem ? (
-        <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 w-[90%] max-w-sm -translate-x-1/2 -translate-y-1/2">
+        <div
+          className="pointer-events-auto absolute left-1/2 top-1/2 z-20 w-[90%] max-w-sm -translate-x-1/2 -translate-y-1/2"
+          onPointerDown={(event) => event.stopPropagation()}
+        >
           <div className="relative w-full" style={{ aspectRatio: zoomedItem.aspectRatio }}>
             <Image
               src={zoomedItem.src}
@@ -197,6 +235,51 @@ export default function LivingRoomPage() {
             />
           </div>
           {renderDialog("mt-4 max-w-sm")}
+          {zoomedItem.alt === "Safe" && !safeSolved ? (
+            <form
+              className="mt-3 flex w-full items-center gap-2 rounded-xl bg-black/60 px-3 py-2"
+              onSubmit={(event) => {
+                event.preventDefault();
+                const trimmed = safeInput.trim();
+                if (trimmed === "17") {
+                  setSafeSolved(true);
+                  setSafeInput("");
+                  showDialog({
+                    key: "safe-open",
+                    text: "It's open now!",
+                    showBilly: false,
+                    showBackground: true,
+                    useTypewriter: false,
+                    speaker: "",
+                  });
+                  triggerFlash("green");
+                } else {
+                  triggerFlash("red");
+                }
+              }}
+            >
+              <label className="sr-only" htmlFor="safe-code">
+                Safe code
+              </label>
+              <input
+                id="safe-code"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                autoComplete="off"
+                value={safeInput}
+                onChange={(event) => setSafeInput(event.target.value)}
+                className="w-full rounded-lg bg-white/90 px-3 py-2 text-lg font-semibold text-[#3A3A3A] outline-none"
+                placeholder="Enter code"
+              />
+              <button
+                type="submit"
+                className="rounded-lg bg-white px-3 py-2 text-sm font-semibold text-[#3A3A3A]"
+              >
+                Open
+              </button>
+            </form>
+          ) : null}
         </div>
       ) : null}
       <div className="absolute inset-0 z-10">
@@ -377,16 +460,18 @@ export default function LivingRoomPage() {
           {renderDialog("mt-6 max-w-sm")}
         </div>
       ) : null}
-      <Link
-        href="/museum"
-        className="absolute bottom-6 right-6 z-20 bg-transparent px-4 py-2 text-5xl font-semibold text-white"
-        style={{
-          textShadow:
-            "3px 3px 0 #B80B3F, -2px -2px 0 #E80E4F, 2px -2px 0 #E80E4F, -2px 2px 0 #E80E4F, 0 2px 0 #E80E4F, 2px 0 0 #E80E4F, -2px 0 0 #E80E4F, 0 -2px 0 #E80E4F",
-        }}
-      >
-        Next
-      </Link>
+      {fossilRevealed && !dialog.isVisible && dialog.key === "fossil" ? (
+        <Link
+          href="/museum"
+          className="absolute bottom-6 right-6 z-20 bg-transparent px-4 py-2 text-5xl font-semibold text-white"
+          style={{
+            textShadow:
+              "3px 3px 0 #B80B3F, -2px -2px 0 #E80E4F, 2px -2px 0 #E80E4F, -2px 2px 0 #E80E4F, 0 2px 0 #E80E4F, 2px 0 0 #E80E4F, -2px 0 0 #E80E4F, 0 -2px 0 #E80E4F",
+          }}
+        >
+          Next
+        </Link>
+      ) : null}
     </main>
   );
 }
