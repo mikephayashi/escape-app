@@ -460,7 +460,7 @@ export default function LivingRoomPage() {
         <>
           {/* Overlay to block clicks on everything except the next button */}
           <div className="pointer-events-auto absolute inset-0 z-[25]" />
-          <NextButton href="/museum" className="z-30" />
+          <NextButton href="/museum-entrance" className="z-30" />
         </>
       ) : null}
     </main>
