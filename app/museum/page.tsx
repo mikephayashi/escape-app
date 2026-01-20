@@ -1,117 +1,355 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import DialogBox from "../components/DialogBox";
+import BillyDialog from "../components/BillyDialog";
 import PositionedItem from "../components/PositionedItem";
 import NextButton from "../components/NextButton";
 
-const dialogLines = [
-  "Oh do you have something for me? Wow a fossil!",
-  "Here's a ticket to enter the art exhibit.",
-];
-
 export default function MuseumPage() {
-  const [backgroundImage, setBackgroundImage] = useState(
-    "/assets/scenes/museum/museum-outside.png",
-  );
-  const [dialogIndex, setDialogIndex] = useState(0);
-  const [dialogText, setDialogText] = useState("");
-  const [isPromptComplete, setIsPromptComplete] = useState(false);
-  const [isDialogComplete, setIsDialogComplete] = useState(false);
-  const [stage, setStage] = useState<"outside" | "entrance" | "inside">(
-    "outside",
-  );
-  const dialogImages: Record<number, string> = {
-    0: "/assets/scenes/living-room/Fossil.png",
-    1: "/assets/scenes/museum/Ticket.png",
-  };
+  const [zoomedItem, setZoomedItem] = useState<{
+    src: string;
+    alt: string;
+    aspectRatio: string;
+  } | null>(null);
+  const [dialog, setDialog] = useState({
+    text: "",
+    isVisible: false,
+    showBilly: false,
+    showBackground: true,
+    useTypewriter: false,
+    speaker: "",
+    key: "",
+  });
+  const [lockInput, setLockInput] = useState("");
+  const [lockSolved, setLockSolved] = useState(false);
 
+  // Show Billy's introduction dialog on page load
   useEffect(() => {
-    setIsPromptComplete(false);
-  }, [dialogText]);
+    setDialog({
+      text: "Explore the exhibit. Maybe you'll find some clues . . .",
+      isVisible: true,
+      showBilly: true,
+      showBackground: true,
+      useTypewriter: true,
+      speaker: "Billy",
+      key: "intro",
+    });
+  }, []);
 
-
-  const handleScreenTap = () => {
-    if (stage === "inside") {
-      return;
-    }
-
-    if (stage === "outside") {
-      setStage("entrance");
-      setBackgroundImage("/assets/scenes/museum/museum-entrance.png");
-      setDialogIndex(0);
-      setIsDialogComplete(false);
-      setDialogText(dialogLines[0]);
-      return;
-    }
-
-    if (stage === "entrance") {
-      if (dialogText) {
-        if (!isPromptComplete) {
-          return;
-        }
-
-        if (dialogIndex < dialogLines.length - 1) {
-          const nextIndex = dialogIndex + 1;
-          setDialogIndex(nextIndex);
-          setDialogText(dialogLines[nextIndex]);
-          return;
-        }
-
-        setDialogText("");
-        setIsDialogComplete(true);
-        return;
-      }
-
-      if (isDialogComplete) {
-        setStage("inside");
-        setBackgroundImage("/assets/scenes/museum/museum-inside.png");
-      }
-    }
-  };
+  const showDialog = ({
+    key,
+    text,
+    showBilly = false,
+    showBackground = true,
+    useTypewriter = false,
+    speaker = "",
+  }: {
+    key: string;
+    text: string;
+    showBilly?: boolean;
+    showBackground?: boolean;
+    useTypewriter?: boolean;
+    speaker?: string;
+  }) =>
+    setDialog((current) =>
+      current.isVisible && current.key === key
+        ? { ...current, isVisible: false }
+        : {
+            text,
+            isVisible: true,
+            showBilly,
+            showBackground,
+            useTypewriter,
+            speaker,
+            key,
+          },
+    );
 
   return (
     <main
       className="relative min-h-screen w-full bg-cover bg-center"
-      style={{ backgroundImage: `url('${backgroundImage}')` }}
-      onPointerDown={handleScreenTap}
+      style={{ backgroundImage: `url('/assets/scenes/museum/Museum%20Empty.png')` }}
     >
-      <div className="mx-auto flex min-h-screen w-full max-w-md flex-col items-center px-4 pt-16">
-        <DialogBox
-          text={dialogText}
-          speaker="Blathers"
-          className="mt-6 max-w-sm"
-          onComplete={() => setIsPromptComplete(true)}
-          characterImage={
-            stage === "entrance" && dialogText
-              ? {
-                  src: dialogImages[dialogIndex],
-                  alt: dialogIndex === 0 ? "Fossil" : "Museum ticket",
-                  width: 240,
-                  height: 240,
-                  className: "h-auto w-40",
-                  priority: true,
-                }
-              : undefined
-          }
-        />
+      {/* Museum inside - display layer for items */}
+      <div className="pointer-events-none absolute inset-0 z-0">
+        {/* Portraits on the wall */}
+        <PositionedItem left="5%" top="15%" width="18%" aspectRatio="1024 / 1536">
+          <Image
+            src="/assets/scenes/museum/Portrait1.png"
+            alt="Portrait 1"
+            fill
+            sizes="18vw"
+            className="object-contain"
+          />
+        </PositionedItem>
+        <PositionedItem left="28%" top="15%" width="18%" aspectRatio="1024 / 1536">
+          <Image
+            src="/assets/scenes/museum/Portrait2.png"
+            alt="Portrait 2"
+            fill
+            sizes="18vw"
+            className="object-contain"
+          />
+        </PositionedItem>
+        <PositionedItem left="51%" top="15%" width="18%" aspectRatio="1024 / 1536">
+          <Image
+            src="/assets/scenes/museum/Portrait3.png"
+            alt="Portrait 3"
+            fill
+            sizes="18vw"
+            className="object-contain"
+          />
+        </PositionedItem>
+        <PositionedItem left="74%" top="15%" width="18%" aspectRatio="1024 / 1536">
+          <Image
+            src="/assets/scenes/museum/Portrait4.png"
+            alt="Portrait 4"
+            fill
+            sizes="18vw"
+            className="object-contain"
+          />
+        </PositionedItem>
+
+        {/* Items on the table */}
+        <PositionedItem left="75%" top="70%" width="25%" aspectRatio="1536 / 1024">
+          <Image
+            src="/assets/scenes/museum/Paper%20Trash.png"
+            alt="Paper Trash"
+            fill
+            sizes="25vw"
+            className="object-contain"
+          />
+        </PositionedItem>
+        <PositionedItem left="55%" top="60%" width="25%" aspectRatio="1024 / 1536">
+          <Image
+            src="/assets/scenes/museum/Letter%20Lock.png"
+            alt="Letter Lock"
+            fill
+            sizes="25vw"
+            className="object-contain"
+          />
+        </PositionedItem>
       </div>
-      {stage === "inside" ? <NextButton href="/office" /> : null}
-      {stage === "entrance" && isDialogComplete && !dialogText ? (
-        <div className="pointer-events-none absolute inset-0 z-20">
-          <PositionedItem left="24%" top="20%" width="50%" aspectRatio="1 / 1">
+
+      {/* Dismiss overlay for zoomed item */}
+      {zoomedItem ? (
+        <div
+          className="pointer-events-auto absolute inset-0 z-[15] bg-black/40"
+          onClick={() => {
+            setDialog((current) => ({ ...current, isVisible: false }));
+            setZoomedItem(null);
+          }}
+        />
+      ) : null}
+
+      {/* Zoomed item display */}
+      {zoomedItem ? (
+        <div className="pointer-events-none absolute left-1/2 top-1/2 w-[90%] max-w-sm -translate-x-1/2 -translate-y-1/2 z-20">
+          <div className="flex justify-center">
             <Image
-              src="/assets/scenes/museum/Arrow.png"
-              alt="Entrance arrow"
-              fill
-              sizes="14vw"
-              className="object-contain"
-              style={{ transform: "rotate(90deg)" }}
+              src={zoomedItem.src}
+              alt={zoomedItem.alt}
+              width={176}
+              height={176}
+              className="h-auto max-h-44 w-auto max-w-44 object-contain"
               priority
             />
-          </PositionedItem>
+          </div>
+          <DialogBox
+            text={dialog.text}
+            speaker={dialog.speaker}
+            isVisible={dialog.isVisible}
+            showBackground={dialog.showBackground}
+            useTypewriter={dialog.useTypewriter}
+            showOverlay={false}
+            className="mt-4 max-w-sm"
+            inputBox={{
+              isVisible: zoomedItem.alt === "Letter Lock" && !lockSolved,
+              value: lockInput,
+              onChange: setLockInput,
+              onSubmit: () => {
+                const trimmed = lockInput.trim().toLowerCase();
+                if (trimmed === "brew") {
+                  setLockSolved(true);
+                  setLockInput("");
+                  showDialog({
+                    key: "lock-open",
+                    text: "The lock clicks open!",
+                  });
+                  return true;
+                }
+                return false;
+              },
+              placeholder: "Enter code",
+              showSubmitButton: true,
+              submitButtonLabel: "Open",
+              label: "Lock code",
+            }}
+          />
         </div>
+      ) : null}
+
+      {/* Museum inside - interactive layer for clickable items */}
+      {!zoomedItem ? (
+        <div className="absolute inset-0 z-10">
+          {/* Portrait 1 button */}
+          <PositionedItem
+            as="button"
+            type="button"
+            aria-label="Portrait 1"
+            className="pointer-events-auto"
+            left="5%"
+            top="15%"
+            width="18%"
+            aspectRatio="1024 / 1536"
+            onClick={() => {
+              setZoomedItem({
+                src: "/assets/scenes/museum/Portrait1.png",
+                alt: "Portrait 1",
+                aspectRatio: "1024 / 1536",
+              });
+              showDialog({
+                key: "portrait1",
+                text: "A beautiful portrait. The subject looks quite distinguished.",
+              });
+            }}
+          />
+          {/* Portrait 2 button */}
+          <PositionedItem
+            as="button"
+            type="button"
+            aria-label="Portrait 2"
+            className="pointer-events-auto"
+            left="28%"
+            top="15%"
+            width="18%"
+            aspectRatio="1024 / 1536"
+            onClick={() => {
+              setZoomedItem({
+                src: "/assets/scenes/museum/Portrait2.png",
+                alt: "Portrait 2",
+                aspectRatio: "1024 / 1536",
+              });
+              showDialog({
+                key: "portrait2",
+                text: "Another lovely portrait. Such intricate detail.",
+              });
+            }}
+          />
+          {/* Portrait 3 button */}
+          <PositionedItem
+            as="button"
+            type="button"
+            aria-label="Portrait 3"
+            className="pointer-events-auto"
+            left="51%"
+            top="15%"
+            width="18%"
+            aspectRatio="1024 / 1536"
+            onClick={() => {
+              setZoomedItem({
+                src: "/assets/scenes/museum/Portrait3.png",
+                alt: "Portrait 3",
+                aspectRatio: "1024 / 1536",
+              });
+              showDialog({
+                key: "portrait3",
+                text: "This portrait seems to tell a story.",
+              });
+            }}
+          />
+          {/* Portrait 4 button */}
+          <PositionedItem
+            as="button"
+            type="button"
+            aria-label="Portrait 4"
+            className="pointer-events-auto"
+            left="74%"
+            top="15%"
+            width="18%"
+            aspectRatio="1024 / 1536"
+            onClick={() => {
+              setZoomedItem({
+                src: "/assets/scenes/museum/Portrait4.png",
+                alt: "Portrait 4",
+                aspectRatio: "1024 / 1536",
+              });
+              showDialog({
+                key: "portrait4",
+                text: "The final portrait in the collection. Magnificent!",
+              });
+            }}
+          />
+          {/* Paper Trash button */}
+          <PositionedItem
+            as="button"
+            type="button"
+            aria-label="Paper Trash"
+            className="pointer-events-auto"
+            left="20%"
+            top="55%"
+            width="25%"
+            aspectRatio="1536 / 1024"
+            onClick={() => {
+              setZoomedItem({
+                src: "/assets/scenes/museum/Paper%20Trash.png",
+                alt: "Paper Trash",
+                aspectRatio: "1536 / 1024",
+              });
+              showDialog({
+                key: "paper-trash",
+                text: "A crumpled piece of paper. Maybe there's something written on it?",
+              });
+            }}
+          />
+          {/* Letter Lock button */}
+          <PositionedItem
+            as="button"
+            type="button"
+            aria-label="Letter Lock"
+            className="pointer-events-auto"
+            left="55%"
+            top="55%"
+            width="25%"
+            aspectRatio="1024 / 1536"
+            onClick={() => {
+              setZoomedItem({
+                src: "/assets/scenes/museum/Letter%20Lock.png",
+                alt: "Letter Lock",
+                aspectRatio: "1024 / 1536",
+              });
+              showDialog({
+                key: "letter-lock",
+                text: "A lock with letter dials. What could the combination be?",
+              });
+            }}
+          />
+        </div>
+      ) : null}
+
+      {/* Billy dialog for intro when no item is zoomed */}
+      {!zoomedItem ? (
+        <div className="pointer-events-none relative z-20 mx-auto flex min-h-screen w-full max-w-md flex-col items-center px-4 pt-16">
+          <BillyDialog
+            text={dialog.text}
+            characterImageVisible={dialog.showBilly && dialog.isVisible}
+            isVisible={dialog.isVisible}
+            showBackground={dialog.showBackground}
+            useTypewriter={dialog.useTypewriter}
+            className="mt-6 max-w-sm"
+            onDialogClick={() => setDialog((current) => ({ ...current, isVisible: false }))}
+          />
+        </div>
+      ) : null}
+
+      {lockSolved && !dialog.isVisible && dialog.key === "lock-open" ? (
+        <>
+          {/* Overlay to block clicks on everything except the next button */}
+          <div className="pointer-events-auto absolute inset-0 z-[25]" />
+          <NextButton href="/office" className="z-30" />
+        </>
       ) : null}
     </main>
   );

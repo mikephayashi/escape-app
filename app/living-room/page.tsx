@@ -24,16 +24,8 @@ export default function LivingRoomPage() {
   } | null>(null);
   const [safeInput, setSafeInput] = useState("");
   const [safeSolved, setSafeSolved] = useState(false);
-  const [flashColor, setFlashColor] = useState<"green" | "red" | null>(null);
   const [fossilRevealed, setFossilRevealed] = useState(false);
   const [livingRoomHintVisible, setLivingRoomHintVisible] = useState(false);
-
-  const triggerFlash = (color: "green" | "red") => {
-    setFlashColor(color);
-    window.setTimeout(() => {
-      setFlashColor(null);
-    }, 260);
-  };
 
   const showDialog = ({
     key,
@@ -75,13 +67,6 @@ export default function LivingRoomPage() {
       className="relative min-h-screen w-full bg-cover bg-center"
       style={{ backgroundImage: "url('/assets/scenes/living-room/Living%20Room%20Empty.png')" }}
     >
-      {flashColor ? (
-        <div
-          className={`pointer-events-none absolute inset-0 z-30 ${
-            flashColor === "green" ? "bg-green-300/70" : "bg-red-400/70"
-          }`}
-        />
-      ) : null}
       {livingRoomHintVisible && zoomedItem?.alt === "Sticky note" ? (
         <div
           className="pointer-events-auto absolute inset-0 z-40 bg-black/50"
@@ -224,10 +209,9 @@ export default function LivingRoomPage() {
                     useTypewriter: false,
                     speaker: "",
                   });
-                  triggerFlash("green");
-                } else {
-                  triggerFlash("red");
+                  return true;
                 }
+                return false;
               },
               placeholder: "Enter code",
               inputMode: "numeric",

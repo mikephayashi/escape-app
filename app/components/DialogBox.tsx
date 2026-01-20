@@ -36,7 +36,8 @@ type DialogBoxProps = {
     isVisible: boolean;
     value: string;
     onChange: (value: string) => void;
-    onSubmit: () => void;
+    /** Return true for success (green flash), false for failure (red flash), or void for no flash */
+    onSubmit: () => boolean | void;
     placeholder?: string;
     inputMode?: "text" | "numeric";
     pattern?: string;
@@ -98,6 +99,7 @@ export default function DialogBox({
   onDialogClick,
 }: DialogBoxProps) {
   const [isTypewriterComplete, setIsTypewriterComplete] = useState(!useTypewriter);
+  const [flashColor, setFlashColor] = useState<"green" | "red" | null>(null);
 
   // Reset completion state when text changes or typewriter setting changes
   useEffect(() => {
@@ -107,6 +109,23 @@ export default function DialogBox({
   const handleTypewriterComplete = () => {
     setIsTypewriterComplete(true);
     onComplete?.();
+  };
+
+  const triggerFlash = (color: "green" | "red") => {
+    setFlashColor(color);
+    window.setTimeout(() => {
+      setFlashColor(null);
+    }, 260);
+  };
+
+  const handleInputSubmit = () => {
+    if (!inputBox) return;
+    const result = inputBox.onSubmit();
+    if (result === true) {
+      triggerFlash("green");
+    } else if (result === false) {
+      triggerFlash("red");
+    }
   };
 
   // Only allow dismissing when typewriter is complete
@@ -124,6 +143,13 @@ export default function DialogBox({
 
   return (
     <>
+      {flashColor ? (
+        <div
+          className={`pointer-events-none fixed inset-0 z-50 ${
+            flashColor === "green" ? "bg-green-300/70" : "bg-red-400/70"
+          }`}
+        />
+      ) : null}
       {showOverlay ? <DialogOverlay isVisible={isDialogVisible} onClick={canDismiss ? onDialogClick : undefined} blockInteractions={!isTypewriterComplete} /> : null}
       {showDialog ? (
         <>
@@ -208,7 +234,7 @@ export default function DialogBox({
                 } ${inputBox.isVisible ? "opacity-100" : "pointer-events-none opacity-0"}`}
                 onSubmit={(event) => {
                   event.preventDefault();
-                  inputBox.onSubmit();
+                  handleInputSubmit();
                 }}
                 onClick={(event) => event.stopPropagation()}
                 onPointerDown={(event) => event.stopPropagation()}
@@ -230,7 +256,7 @@ export default function DialogBox({
                   onKeyDown={(event) => {
                     if (event.key === "Enter") {
                       event.preventDefault();
-                      inputBox.onSubmit();
+                      handleInputSubmit();
                     }
                   }}
                   className={`w-full rounded-md border border-white/70 bg-white/90 px-4 py-2 text-center text-sm font-semibold text-[#808080] shadow-sm outline-none focus:border-white ${
