@@ -57,6 +57,7 @@ export default function WordyPage() {
   const [currentGuess, setCurrentGuess] = useState("");
   const [gameOver, setGameOver] = useState(false);
   const [won, setWon] = useState(false);
+  const [showResultMessage, setShowResultMessage] = useState(false);
   const [shake, setShake] = useState(false);
   const [keyboardColors, setKeyboardColors] = useState<Record<string, LetterState>>({});
 
@@ -95,13 +96,22 @@ export default function WordyPage() {
 
     setCurrentGuess("");
 
-    if (currentGuess === ANSWER) {
-      setWon(true);
+    const isWin = currentGuess === ANSWER;
+    const isLoss = !isWin && guesses.length + 1 >= MAX_GUESSES;
+
+    if (isWin || isLoss) {
       setGameOver(true);
-    } else if (guesses.length + 1 >= MAX_GUESSES) {
-      setGameOver(true);
+      setWon(isWin);
+      // Show result message after a brief pause
+      setTimeout(() => {
+        setShowResultMessage(true);
+      }, 500);
+      // Navigate back to speakeasy after showing message
+      setTimeout(() => {
+        router.push(`/speakeasy-inside?wordy=${isWin ? "won" : "lost"}`);
+      }, 2500);
     }
-  }, [currentGuess, guesses.length]);
+  }, [currentGuess, guesses.length, router]);
 
   const handleKeyPress = useCallback(
     (key: string) => {
@@ -228,22 +238,14 @@ export default function WordyPage() {
         </div>
       </div>
 
-      {/* Win/Lose Message */}
-      {gameOver && (
-        <div className="mt-4 rounded-lg bg-black/70 px-6 py-3 text-center">
+      {/* Result Message */}
+      {showResultMessage && (
+        <div className="mt-4 rounded-xl bg-[#4a3728] px-6 py-4 text-center shadow-xl">
           {won ? (
-            <p className="text-2xl text-green-400">You got it! 🎉</p>
+            <p className="text-2xl text-green-400">You got it! Lager!</p>
           ) : (
-            <p className="text-xl text-white">
-              The word was <span className="text-yellow-400">{ANSWER}</span>
-            </p>
+            <p className="text-xl text-red-400">Uh oh. You&apos;re out of guesses</p>
           )}
-          <button
-            onClick={() => router.push("/speakeasy-inside")}
-            className="mt-3 rounded-lg bg-amber-700 px-4 py-2 text-lg text-white transition-colors hover:bg-amber-600"
-          >
-            Continue
-          </button>
         </div>
       )}
 
