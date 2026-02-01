@@ -84,6 +84,14 @@ export default function IslandPage() {
       return;
     }
 
+    // Check if name is on the guest list
+    const userImage = getUserImage(name);
+    if (!userImage) {
+      setDialogText("You're not invited to the wedding! Let me check the list again. What's your legal first name?");
+      setName("");
+      return;
+    }
+
     setIsNameInputVisible(false);
     setDialogText(`Hi ${name.trim()}!`);
     setStage("greeting");

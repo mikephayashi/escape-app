@@ -46,11 +46,13 @@ function SpeakeasyInsideContent() {
   // Lager drinking flow: "lager-dialog" → "lager-full" → "lager-pouring" → "lager-empty" → "brewster-final"
   const [lagerStep, setLagerStep] = useState<"lager-dialog" | "lager-full" | "lager-pouring" | "lager-empty" | "brewster-final" | null>(null);
   // Tilt detection states
-  const [tiltAngle, setTiltAngle] = useState(0);
+  const [tiltAngle, setTiltAngle] = useState(0); // Actual rotation angle (can be negative or positive)
   const [hasTiltSupport, setHasTiltSupport] = useState<boolean | null>(null);
   const [tiltPermissionRequested, setTiltPermissionRequested] = useState(false);
-  // Smoothing ref for tilt
+  // Smoothing refs for tilt (using circular buffer for better averaging)
   const smoothedTiltRef = useRef(0);
+  const lastTiltTimeRef = useRef<number>(0);
+  const tiltHistoryRef = useRef<number[]>([]);
   // Pour progress: 0-100%, opacity = 1 - (pourProgress/100)
   const [pourProgress, setPourProgress] = useState(0);
   const lastTickRef = useRef<number | null>(null);
@@ -59,6 +61,8 @@ function SpeakeasyInsideContent() {
   const [isPouring, setIsPouring] = useState(false);
   // Track when pour is complete (to keep showing empty beer with next button)
   const [pourComplete, setPourComplete] = useState(false);
+  // Store final tilt angle when pour completes
+  const [finalTiltAngle, setFinalTiltAngle] = useState(0);
 
   const showDialogFn = ({
     key,
@@ -93,7 +97,8 @@ function SpeakeasyInsideContent() {
   const triggerPourComplete = useCallback(() => {
     if (lagerStep !== "lager-pouring") return;
     
-    // Pour complete - keep tilted mug visible, stop sound, show next button
+    // Pour complete - keep tilted mug visible at current angle, stop sound, show next button
+    setFinalTiltAngle(smoothedTiltRef.current);
     setPourComplete(true);
     setIsPouring(false);
     lastTickRef.current = null;
@@ -196,11 +201,12 @@ function SpeakeasyInsideContent() {
 
     let receivedValidData = false;
     let fallbackTimeout: NodeJS.Timeout;
+    const HISTORY_SIZE = 8; // Number of samples to average for smoothing
     
     const handleOrientation = (event: DeviceOrientationEvent) => {
       // gamma is the left-to-right tilt in degrees (-90 to 90)
       // Negative gamma = tilting left (counter-clockwise)
-      // Positive gamma = tilting right (clockwise) - we ignore this
+      // Positive gamma = tilting right (clockwise)
       const gamma = event.gamma;
       
       // Check if we're getting real sensor data (not null/undefined)
@@ -209,24 +215,49 @@ function SpeakeasyInsideContent() {
         setHasTiltSupport(true);
       }
       
-      // Only respond to counter-clockwise tilt (negative gamma / left tilt)
-      // Ignore clockwise tilt (positive gamma)
-      const rawTilt = gamma !== null && gamma < 0 ? Math.abs(gamma) : 0;
+      const rawTilt = gamma ?? 0;
+      const now = performance.now();
       
-      // Smooth the tilt using exponential moving average (lower = smoother, higher = responsive)
-      const smoothingFactor = 0.15;
-      smoothedTiltRef.current = smoothedTiltRef.current + (rawTilt - smoothedTiltRef.current) * smoothingFactor;
+      // Add to history buffer for moving average smoothing
+      tiltHistoryRef.current.push(rawTilt);
+      if (tiltHistoryRef.current.length > HISTORY_SIZE) {
+        tiltHistoryRef.current.shift();
+      }
+      
+      // Calculate weighted moving average (more recent samples have higher weight)
+      let weightedSum = 0;
+      let weightTotal = 0;
+      tiltHistoryRef.current.forEach((val, idx) => {
+        const weight = idx + 1; // Weight increases for newer samples
+        weightedSum += val * weight;
+        weightTotal += weight;
+      });
+      const averagedTilt = weightTotal > 0 ? weightedSum / weightTotal : rawTilt;
+      
+      // Additional exponential smoothing on top of moving average for ultra-smooth motion
+      // Use frame-time-independent smoothing
+      const deltaTime = lastTiltTimeRef.current > 0 ? (now - lastTiltTimeRef.current) / 1000 : 0.016;
+      lastTiltTimeRef.current = now;
+      
+      // Smoothing factor that's frame-rate independent (higher = more responsive)
+      const smoothSpeed = 8; // Adjust this: lower = smoother, higher = more responsive
+      const smoothFactor = 1 - Math.exp(-smoothSpeed * deltaTime);
+      
+      smoothedTiltRef.current = smoothedTiltRef.current + (averagedTilt - smoothedTiltRef.current) * smoothFactor;
       const smoothedTilt = smoothedTiltRef.current;
       
+      // Use the actual smoothed value for rotation (can be negative or positive)
       setTiltAngle(smoothedTilt);
       
-      const now = Date.now();
+      // Check if tilted enough in EITHER direction (absolute value >= 70)
+      const absTilt = Math.abs(smoothedTilt);
+      const nowMs = Date.now();
       
-      // Only progress opacity when tilted past 70 degrees
-      if (smoothedTilt >= 70) {
+      // Only progress opacity when tilted past 70 degrees in either direction
+      if (absTilt >= 70) {
         setIsPouring(true);
         if (lastTickRef.current !== null) {
-          const deltaMs = now - lastTickRef.current;
+          const deltaMs = nowMs - lastTickRef.current;
           // 10 seconds = 10000ms to go from 0 to 100%
           const progressIncrement = (deltaMs / 10000) * 100;
           setPourProgress(prev => {
@@ -237,7 +268,7 @@ function SpeakeasyInsideContent() {
             return newProgress;
           });
         }
-        lastTickRef.current = now;
+        lastTickRef.current = nowMs;
       } else {
         // Below 70 degrees - pause the timer and sound
         setIsPouring(false);
@@ -269,12 +300,17 @@ function SpeakeasyInsideContent() {
     return () => {
       window.removeEventListener('deviceorientation', handleOrientation);
       if (fallbackTimeout) clearTimeout(fallbackTimeout);
+      // Reset smoothing state when unmounting
+      tiltHistoryRef.current = [];
+      lastTiltTimeRef.current = 0;
     };
   }, [lagerStep, triggerPourComplete]);
 
   // Request permission for iOS devices
   const requestTiltPermission = async () => {
     setTiltPermissionRequested(true);
+    const HISTORY_SIZE = 8;
+    
     try {
       const DeviceOrientationEventTyped = DeviceOrientationEvent as unknown as { 
         requestPermission?: () => Promise<string> 
@@ -285,23 +321,45 @@ function SpeakeasyInsideContent() {
         if (permission === 'granted') {
           window.addEventListener('deviceorientation', (event: DeviceOrientationEvent) => {
             const gamma = event.gamma;
-            // Only respond to counter-clockwise tilt (negative gamma / left tilt)
-            const rawTilt = gamma !== null && gamma < 0 ? Math.abs(gamma) : 0;
+            const rawTilt = gamma ?? 0;
+            const now = performance.now();
             
-            // Smooth the tilt using exponential moving average
-            const smoothingFactor = 0.15;
-            smoothedTiltRef.current = smoothedTiltRef.current + (rawTilt - smoothedTiltRef.current) * smoothingFactor;
+            // Add to history buffer for moving average smoothing
+            tiltHistoryRef.current.push(rawTilt);
+            if (tiltHistoryRef.current.length > HISTORY_SIZE) {
+              tiltHistoryRef.current.shift();
+            }
+            
+            // Calculate weighted moving average
+            let weightedSum = 0;
+            let weightTotal = 0;
+            tiltHistoryRef.current.forEach((val, idx) => {
+              const weight = idx + 1;
+              weightedSum += val * weight;
+              weightTotal += weight;
+            });
+            const averagedTilt = weightTotal > 0 ? weightedSum / weightTotal : rawTilt;
+            
+            // Frame-rate-independent exponential smoothing
+            const deltaTime = lastTiltTimeRef.current > 0 ? (now - lastTiltTimeRef.current) / 1000 : 0.016;
+            lastTiltTimeRef.current = now;
+            
+            const smoothSpeed = 8;
+            const smoothFactor = 1 - Math.exp(-smoothSpeed * deltaTime);
+            
+            smoothedTiltRef.current = smoothedTiltRef.current + (averagedTilt - smoothedTiltRef.current) * smoothFactor;
             const smoothedTilt = smoothedTiltRef.current;
             
             setTiltAngle(smoothedTilt);
             
-            const now = Date.now();
+            const absTilt = Math.abs(smoothedTilt);
+            const nowMs = Date.now();
             
-            // Only progress opacity when tilted past 70 degrees
-            if (smoothedTilt >= 70) {
+            // Only progress opacity when tilted past 70 degrees in either direction
+            if (absTilt >= 70) {
               setIsPouring(true);
               if (lastTickRef.current !== null) {
-                const deltaMs = now - lastTickRef.current;
+                const deltaMs = nowMs - lastTickRef.current;
                 const progressIncrement = (deltaMs / 10000) * 100;
                 setPourProgress(prev => {
                   const newProgress = Math.min(100, prev + progressIncrement);
@@ -311,7 +369,7 @@ function SpeakeasyInsideContent() {
                   return newProgress;
                 });
               }
-              lastTickRef.current = now;
+              lastTickRef.current = nowMs;
             } else {
               setIsPouring(false);
               lastTickRef.current = null;
@@ -474,11 +532,15 @@ function SpeakeasyInsideContent() {
             {/* Pouring mode - stacked layers with opacity control */}
             {(lagerStep === "lager-pouring" || pourComplete) ? (
               <div 
-                className="relative flex items-center justify-center transition-transform duration-100"
+                className="relative flex items-center justify-center"
                 style={{
                   width: 200,
                   height: 300,
-                  transform: `rotate(-${pourComplete ? 90 : Math.min(tiltAngle, 90)}deg)`
+                  // Use actual tilt angle directly - matches device orientation
+                  // Clamp between -90 and 90 degrees, lock at final angle when complete
+                  transform: `rotate(${pourComplete ? Math.max(-90, Math.min(90, finalTiltAngle)) : Math.max(-90, Math.min(90, tiltAngle))}deg)`,
+                  // Use will-change for GPU acceleration, no CSS transition (handled by smoothing algorithm)
+                  willChange: 'transform'
                 }}
               >
                 {/* Bottom layer: Empty beer (15% smaller, shifted right and down) */}
