@@ -728,7 +728,7 @@ function SpeakeasyInsideContent() {
               });
               showDialogFn({
                 key: "napkin",
-                text: "There's something written on this napkin...",
+                text: "If you didn't, Tran did.",
                 showBilly: false,
                 showBackground: true,
                 useTypewriter: false,
