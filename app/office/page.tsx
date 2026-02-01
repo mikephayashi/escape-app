@@ -6,6 +6,7 @@ import PositionedItem from "../components/PositionedItem";
 import BillyDialog from "../components/BillyDialog";
 import DialogBox from "../components/DialogBox";
 import NextButton from "../components/NextButton";
+import { useSpeechRecognition } from "../hooks/useSpeechRecognition";
 
 export default function OfficePage() {
   const [dialog, setDialog] = useState({
@@ -30,8 +31,10 @@ export default function OfficePage() {
   const [currentChart, setCurrentChart] = useState<number | null>(null);
   const [showChartChoice, setShowChartChoice] = useState(false);
   const [chartsComplete, setChartsComplete] = useState(false);
-  const [micInput, setMicInput] = useState("");
   const [micSolved, setMicSolved] = useState(false);
+
+  // Speech recognition for microphone puzzle
+  const speechRecognition = useSpeechRecognition();
 
   const showDialogFn = ({
     key,
@@ -173,17 +176,21 @@ export default function OfficePage() {
             useTypewriter={dialog.useTypewriter}
             showOverlay={false}
             className="mt-4 max-w-sm"
-            inputBox={
+            audioInput={
               zoomedItem?.alt === "Microphone"
                 ? {
                     isVisible: !micSolved,
-                    value: micInput,
-                    onChange: setMicInput,
-                    onSubmit: () => {
-                      const trimmed = micInput.trim();
-                      if (trimmed === "5375") {
+                    isListening: speechRecognition.isListening,
+                    transcript: speechRecognition.transcript,
+                    extractedNumbers: speechRecognition.extractedNumbers,
+                    error: speechRecognition.error,
+                    isSupported: speechRecognition.isSupported,
+                    onStartListening: speechRecognition.startListening,
+                    onStopListening: speechRecognition.stopListening,
+                    onSubmit: (numbers: string) => {
+                      if (numbers === "5375") {
                         setMicSolved(true);
-                        setMicInput("");
+                        speechRecognition.resetTranscript();
                         showDialogFn({
                           key: "mic-correct",
                           text: "Oh, are you lost? I think Gulliver might be able to get you home. He should be on the beach.",
@@ -194,14 +201,13 @@ export default function OfficePage() {
                       }
                       return false;
                     },
-                    placeholder: "Enter code...",
-                    inputMode: "numeric",
-                    pattern: "[0-9]*",
-                    showSubmitButton: true,
-                    submitButtonLabel: "Submit",
-                    label: "Microphone code",
+                    label: "Speak the code into the microphone",
                   }
-                : {
+                : undefined
+            }
+            inputBox={
+              zoomedItem?.alt === "Computer"
+                ? {
                     isVisible: showPasswordInput && !passwordSolved && currentChart === null,
                     value: passwordInput,
                     onChange: setPasswordInput,
@@ -227,6 +233,7 @@ export default function OfficePage() {
                     submitButtonLabel: "Submit",
                     label: "Password",
                   }
+                : undefined
             }
             choiceButtons={
               currentChart !== null && showChartChoice

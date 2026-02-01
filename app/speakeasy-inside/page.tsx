@@ -54,6 +54,9 @@ function SpeakeasyInsideContent() {
   // Pour progress: 0-100%, opacity = 1 - (pourProgress/100)
   const [pourProgress, setPourProgress] = useState(0);
   const lastTickRef = useRef<number | null>(null);
+  // Pouring sound effect
+  const pourAudioRef = useRef<HTMLAudioElement | null>(null);
+  const [isPouring, setIsPouring] = useState(false);
 
   const showDialogFn = ({
     key,
@@ -88,13 +91,34 @@ function SpeakeasyInsideContent() {
   const triggerPourComplete = useCallback(() => {
     if (lagerStep !== "lager-pouring") return;
     
-    // Pour complete - dismiss zoomed item and show next button
-    setZoomedItem(null);
+    // Pour complete - keep mug visible, stop sound, show next button
     setLagerStep(null);
-    setPourProgress(0);
+    setIsPouring(false);
     lastTickRef.current = null;
     setShowNextButton(true);
   }, [lagerStep]);
+
+  // Manage pouring sound effect
+  useEffect(() => {
+    if (!pourAudioRef.current) {
+      pourAudioRef.current = new Audio("/assets/shared/audio/pouring.mp3");
+      pourAudioRef.current.loop = true;
+    }
+    
+    const audio = pourAudioRef.current;
+    
+    if (isPouring && lagerStep === "lager-pouring") {
+      audio.play().catch(() => {
+        // Autoplay may be blocked, that's okay
+      });
+    } else {
+      audio.pause();
+    }
+    
+    return () => {
+      audio.pause();
+    };
+  }, [isPouring, lagerStep]);
 
   // Handle wordy result or show intro dialog
   useEffect(() => {
@@ -173,6 +197,7 @@ function SpeakeasyInsideContent() {
       
       // Only progress opacity when tilted past 70 degrees
       if (smoothedTilt >= 70) {
+        setIsPouring(true);
         if (lastTickRef.current !== null) {
           const deltaMs = now - lastTickRef.current;
           // 10 seconds = 10000ms to go from 0 to 100%
@@ -187,7 +212,8 @@ function SpeakeasyInsideContent() {
         }
         lastTickRef.current = now;
       } else {
-        // Below 70 degrees - pause the timer
+        // Below 70 degrees - pause the timer and sound
+        setIsPouring(false);
         lastTickRef.current = null;
       }
     };
@@ -246,6 +272,7 @@ function SpeakeasyInsideContent() {
             
             // Only progress opacity when tilted past 70 degrees
             if (smoothedTilt >= 70) {
+              setIsPouring(true);
               if (lastTickRef.current !== null) {
                 const deltaMs = now - lastTickRef.current;
                 const progressIncrement = (deltaMs / 10000) * 100;
@@ -259,6 +286,7 @@ function SpeakeasyInsideContent() {
               }
               lastTickRef.current = now;
             } else {
+              setIsPouring(false);
               lastTickRef.current = null;
             }
           });

@@ -45,6 +45,19 @@ type DialogBoxProps = {
     submitButtonLabel?: string;
     label?: string;
   };
+  audioInput?: {
+    isVisible: boolean;
+    isListening: boolean;
+    transcript: string;
+    extractedNumbers: string;
+    error: string | null;
+    isSupported: boolean;
+    onStartListening: () => void;
+    onStopListening: () => void;
+    /** Return true for success (green flash), false for failure (red flash) */
+    onSubmit: (numbers: string) => boolean;
+    label?: string;
+  };
   onDialogClick?: () => void;
 };
 
@@ -96,6 +109,7 @@ export default function DialogBox({
   characterImage,
   choiceButtons,
   inputBox,
+  audioInput,
   onDialogClick,
 }: DialogBoxProps) {
   const [isTypewriterComplete, setIsTypewriterComplete] = useState(!useTypewriter);
@@ -124,6 +138,16 @@ export default function DialogBox({
     if (result === true) {
       triggerFlash("green");
     } else if (result === false) {
+      triggerFlash("red");
+    }
+  };
+
+  const handleAudioSubmit = () => {
+    if (!audioInput) return;
+    const result = audioInput.onSubmit(audioInput.extractedNumbers);
+    if (result === true) {
+      triggerFlash("green");
+    } else {
       triggerFlash("red");
     }
   };
@@ -274,10 +298,90 @@ export default function DialogBox({
                 ) : null}
               </form>
             ) : null}
+            {audioInput ? (
+              <div
+                className={`pointer-events-auto mt-3 flex w-full flex-col items-center gap-3 rounded-xl bg-black/60 px-4 py-4 transition-opacity duration-500 ${
+                  audioInput.isVisible ? "opacity-100" : "pointer-events-none opacity-0"
+                }`}
+                onClick={(event) => event.stopPropagation()}
+                onPointerDown={(event) => event.stopPropagation()}
+                aria-hidden={!audioInput.isVisible}
+              >
+                {audioInput.label ? (
+                  <span className="text-sm font-medium text-white/80">
+                    {audioInput.label}
+                  </span>
+                ) : null}
+                {!audioInput.isSupported ? (
+                  <div className="text-center text-sm text-red-300">
+                    Speech recognition is not supported in this browser.
+                    Please use Chrome or Edge.
+                  </div>
+                ) : (
+                  <>
+                    {/* Microphone button */}
+                    <button
+                      type="button"
+                      onClick={audioInput.isListening ? audioInput.onStopListening : audioInput.onStartListening}
+                      className={`flex h-16 w-16 items-center justify-center rounded-full text-3xl transition-all ${
+                        audioInput.isListening
+                          ? "animate-pulse bg-red-500 text-white shadow-lg shadow-red-500/50"
+                          : "bg-white text-[#3A3A3A] hover:bg-white/90"
+                      }`}
+                      aria-label={audioInput.isListening ? "Stop listening" : "Start listening"}
+                    >
+                      {audioInput.isListening ? "🎙️" : "🎤"}
+                    </button>
+
+                    {/* Status text */}
+                    <div className="text-center text-sm text-white/80">
+                      {audioInput.isListening ? (
+                        <span className="flex items-center gap-2">
+                          <span className="h-2 w-2 animate-pulse rounded-full bg-red-500" />
+                          Listening... Speak the numbers
+                        </span>
+                      ) : (
+                        "Tap the microphone and say the code"
+                      )}
+                    </div>
+
+                    {/* Transcript display */}
+                    {audioInput.transcript ? (
+                      <div className="w-full rounded-lg bg-white/10 px-3 py-2 text-center">
+                        <div className="text-xs text-white/60">Heard:</div>
+                        <div className="text-sm text-white">{audioInput.transcript}</div>
+                        {audioInput.extractedNumbers ? (
+                          <div className="mt-1 text-lg font-bold text-green-300">
+                            → {audioInput.extractedNumbers}
+                          </div>
+                        ) : null}
+                      </div>
+                    ) : null}
+
+                    {/* Error display */}
+                    {audioInput.error ? (
+                      <div className="text-center text-sm text-red-300">
+                        {audioInput.error}
+                      </div>
+                    ) : null}
+
+                    {/* Submit button - only show when we have extracted numbers */}
+                    {audioInput.extractedNumbers && !audioInput.isListening ? (
+                      <button
+                        type="button"
+                        onClick={handleAudioSubmit}
+                        className="rounded-lg bg-white px-4 py-2 text-sm font-semibold text-[#3A3A3A] transition-colors hover:bg-white/90"
+                      >
+                        Submit: {audioInput.extractedNumbers}
+                      </button>
+                    ) : null}
+                  </>
+                )}
+              </div>
+            ) : null}
           </div>
         </>
       ) : null}
     </>
   );
 }
-
