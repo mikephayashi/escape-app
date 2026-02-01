@@ -4,7 +4,7 @@ import Link from "next/link";
 export default function StartPage() {
   return (
     <main
-      className="relative flex min-h-screen w-full items-end justify-center bg-cover bg-center pb-6"
+      className="screen-container relative flex items-end justify-center bg-cover bg-center pb-6"
       style={{
         backgroundImage: "url('/assets/shared/backgrounds/island-background.png')",
       }}
@@ -21,4 +21,3 @@ export default function StartPage() {
     </main>
   );
 }
-

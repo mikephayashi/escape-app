@@ -68,11 +68,11 @@ export default function MuseumEntrancePage() {
 
   return (
     <main
-      className="relative min-h-screen w-full bg-cover bg-center"
+      className="screen-container relative bg-cover bg-center"
       style={{ backgroundImage: `url('${backgroundImage}')` }}
       onPointerDown={handleScreenTap}
     >
-      <div className="mx-auto flex min-h-screen w-full max-w-md flex-col items-center px-4 pt-16">
+      <div className="mx-auto flex h-full w-full max-w-md flex-col items-center overflow-y-auto px-4 pt-16">
         <DialogBox
           text={dialogText}
           speaker="Blathers"
@@ -112,5 +112,3 @@ export default function MuseumEntrancePage() {
     </main>
   );
 }
-
-

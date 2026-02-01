@@ -80,11 +80,11 @@ export default function IslandPage() {
 
   return (
     <main
-      className="min-h-screen w-full bg-cover bg-center"
+      className="screen-container bg-cover bg-center"
       style={{ backgroundImage: `url('${backgroundImage}')` }}
       onPointerDown={handleScreenTap}
     >
-      <div className="mx-auto flex min-h-screen w-full max-w-md flex-col items-center px-4 pt-16">
+      <div className="mx-auto flex h-full w-full max-w-md flex-col items-center overflow-y-auto px-4 pt-16">
         {stage === "showPlayer" && gender ? (
           <div className="absolute inset-0 flex items-center justify-center" style={{ paddingTop: "15vh" }}>
             <Image
@@ -158,4 +158,3 @@ export default function IslandPage() {
     </main>
   );
 }
-

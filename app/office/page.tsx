@@ -82,7 +82,7 @@ export default function OfficePage() {
 
   return (
     <main
-      className="relative min-h-screen w-full bg-cover bg-center"
+      className="screen-container relative bg-cover bg-center"
       style={{ backgroundImage: "url('/assets/scenes/office/Office%20empty.png')" }}
     >
       {/* Office items - display layer */}
@@ -367,7 +367,7 @@ export default function OfficePage() {
 
       {/* Billy dialog with choice buttons for laptop */}
       {!zoomedItem ? (
-        <div className="pointer-events-none relative z-20 mx-auto flex min-h-screen w-full max-w-md flex-col items-center px-4 pt-16">
+        <div className="pointer-events-none relative z-20 mx-auto flex h-full w-full max-w-md flex-col items-center overflow-y-auto px-4 pt-16">
           <BillyDialog
             text={dialog.text}
             characterImageVisible={dialog.showBilly && dialog.isVisible}

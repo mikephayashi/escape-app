@@ -64,7 +64,7 @@ export default function LivingRoomPage() {
 
   return (
     <main
-      className="relative min-h-screen w-full bg-cover bg-center"
+      className="screen-container relative bg-cover bg-center"
       style={{ backgroundImage: "url('/assets/scenes/living-room/Living%20Room%20Empty.png')" }}
     >
       {livingRoomHintVisible && zoomedItem?.alt === "Sticky note" ? (
@@ -444,7 +444,7 @@ export default function LivingRoomPage() {
         />
       </div>
       {!zoomedItem ? (
-        <div className="pointer-events-none relative z-20 mx-auto flex min-h-screen w-full max-w-md flex-col items-center px-4 pt-16">
+        <div className="pointer-events-none relative z-20 mx-auto flex h-full w-full max-w-md flex-col items-center overflow-y-auto px-4 pt-16">
           <BillyDialog
             text={dialog.text}
             characterImageVisible={dialog.showBilly && dialog.isVisible}
@@ -466,4 +466,3 @@ export default function LivingRoomPage() {
     </main>
   );
 }
-

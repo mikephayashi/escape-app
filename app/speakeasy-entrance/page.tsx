@@ -44,11 +44,11 @@ export default function SpeakeasyEntrancePage() {
 
   return (
     <main
-      className="relative min-h-screen w-full bg-cover bg-center"
+      className="screen-container relative bg-cover bg-center"
       style={{ backgroundImage: `url('/assets/scenes/speakeasy/speakeasy-entrance.png')` }}
       onPointerDown={handleScreenTap}
     >
-      <div className="pointer-events-none mx-auto flex min-h-screen w-full max-w-md flex-col items-center px-4 pt-16">
+      <div className="pointer-events-none mx-auto flex h-full w-full max-w-md flex-col items-center overflow-y-auto px-4 pt-16">
         <BillyDialog
           text={dialogText}
           characterImageVisible={!!dialogText}
@@ -79,4 +79,3 @@ export default function SpeakeasyEntrancePage() {
     </main>
   );
 }
-

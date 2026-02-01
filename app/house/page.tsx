@@ -35,11 +35,11 @@ export default function HousePage() {
 
   return (
     <main
-      className="min-h-screen w-full bg-cover bg-center"
+      className="screen-container bg-cover bg-center"
       style={{ backgroundImage: `url('${backgroundImage}')` }}
       onPointerDown={handleScreenTap}
     >
-      <div className="mx-auto flex min-h-screen w-full max-w-md flex-col items-center px-4 pt-16">
+      <div className="mx-auto flex h-full w-full max-w-md flex-col items-center overflow-y-auto px-4 pt-16">
         <BillyDialog
           text={dialogText}
           characterImageVisible={isBillyVisible}
@@ -49,4 +49,3 @@ export default function HousePage() {
     </main>
   );
 }
-

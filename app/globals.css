@@ -29,12 +29,43 @@
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: "FinkHeavy", sans-serif;
+/* Override Tailwind base styles - these must come after @import "tailwindcss" */
+@layer base {
+  html,
+  body {
+    height: 100% !important;
+    height: 100dvh !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: "FinkHeavy", sans-serif;
+    /* Prevent overscroll bounce on iOS */
+    overscroll-behavior: none;
+  }
+
+  * {
+    font-family: inherit;
+    box-sizing: border-box;
+  }
 }
 
-* {
-  font-family: inherit;
+/* Mobile-safe full-screen container */
+.screen-container {
+  position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important;
+}
+
+/* Support for iOS Safari safe areas */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .screen-container {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 }

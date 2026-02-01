@@ -69,7 +69,7 @@ export default function MuseumPage() {
 
   return (
     <main
-      className="relative min-h-screen w-full bg-cover bg-center"
+      className="screen-container relative bg-cover bg-center"
       style={{ backgroundImage: `url('/assets/scenes/museum/Museum%20Empty.png')` }}
     >
       {/* Museum inside - display layer for items */}
@@ -331,7 +331,7 @@ export default function MuseumPage() {
 
       {/* Billy dialog for intro when no item is zoomed */}
       {!zoomedItem ? (
-        <div className="pointer-events-none relative z-20 mx-auto flex min-h-screen w-full max-w-md flex-col items-center px-4 pt-16">
+        <div className="pointer-events-none relative z-20 mx-auto flex h-full w-full max-w-md flex-col items-center overflow-y-auto px-4 pt-16">
           <BillyDialog
             text={dialog.text}
             characterImageVisible={dialog.showBilly && dialog.isVisible}
@@ -354,4 +354,3 @@ export default function MuseumPage() {
     </main>
   );
 }
-

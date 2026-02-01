@@ -44,3 +44,5 @@ Open `http://localhost:3000`.
 - `public/assets/scenes/house/House.png` - house screen background
 - `public/assets/scenes/living-room/Living Room Empty.png` - living room background
 - `public/assets/unused/main-background.png` - unused main background image
+
+git push https://mikephayashi:<YOUR_TOKEN>@github.com/mikephayashi/escape-app.git main

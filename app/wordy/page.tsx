@@ -194,7 +194,7 @@ export default function WordyPage() {
 
   return (
     <main
-      className="relative flex min-h-screen w-full flex-col items-center bg-cover bg-center"
+      className="screen-container relative flex flex-col items-center bg-cover bg-center"
       style={{ backgroundImage: `url('/assets/scenes/speakeasy/Wood.png')` }}
     >
       {/* Wordy title at the top */}

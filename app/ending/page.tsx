@@ -102,11 +102,11 @@ export default function EndingPage() {
 
   return (
     <main
-      className="relative min-h-screen w-full bg-cover bg-center"
+      className="screen-container relative bg-cover bg-center"
       style={{ backgroundImage: `url('${getBackgroundImage()}')` }}
       onClick={stage === "plane" ? handleDialogDismiss : undefined}
     >
-      <div className="mx-auto flex min-h-screen w-full max-w-md flex-col items-center justify-center px-4">
+      <div className="mx-auto flex h-full w-full max-w-md flex-col items-center justify-center overflow-y-auto px-4">
         {showItemImage && (
           <div
             className="fixed inset-0 z-20 flex cursor-pointer items-center justify-center bg-black/60"
@@ -161,5 +161,3 @@ export default function EndingPage() {
     </main>
   );
 }
-
-
