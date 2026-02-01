@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import BillyDialog from "../components/BillyDialog";
 import PositionedItem from "../components/PositionedItem";
+import UserAvatar from "../components/UserAvatar";
 
 const dialogLines = [
   "A hidden speakeasy! This must be where they're hiding something...",
@@ -56,6 +57,7 @@ export default function SpeakeasyEntrancePage() {
 
   return (
     <main className="screen-container game-wrapper" onPointerDown={handleScreenTap}>
+      <UserAvatar />
       <div
         className="game-container bg-cover bg-center"
         style={{ backgroundImage: `url('/assets/scenes/speakeasy/speakeasy-entrance.png')` }}

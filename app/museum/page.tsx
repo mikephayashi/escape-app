@@ -6,6 +6,7 @@ import DialogBox from "../components/DialogBox";
 import BillyDialog from "../components/BillyDialog";
 import PositionedItem from "../components/PositionedItem";
 import NextButton from "../components/NextButton";
+import UserAvatar from "../components/UserAvatar";
 
 export default function MuseumPage() {
   // Wait for user interaction before starting typewriter to enable audio
@@ -74,6 +75,7 @@ export default function MuseumPage() {
 
   return (
     <main className="screen-container game-wrapper">
+      <UserAvatar />
       <div
         className="game-container bg-cover bg-center"
         style={{ backgroundImage: `url('/assets/scenes/museum/Museum%20Empty.png')` }}

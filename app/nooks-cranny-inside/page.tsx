@@ -6,6 +6,7 @@ import DialogBox from "../components/DialogBox";
 import ChoiceButtons from "../components/ChoiceButtons";
 import PositionedItem from "../components/PositionedItem";
 import NextButton from "../components/NextButton";
+import UserAvatar from "../components/UserAvatar";
 
 type GamePhase = 
   | "exploring"
@@ -126,6 +127,7 @@ export default function NooksCrannyInsidePage() {
 
   return (
     <main className="screen-container game-wrapper">
+      <UserAvatar />
       <div
         className="game-container bg-cover bg-center"
         style={{ backgroundImage: "url('/assets/scenes/nooks-cranny/Interior.png')" }}

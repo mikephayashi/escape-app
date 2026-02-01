@@ -6,6 +6,7 @@ import Image from "next/image";
 import BillyDialog from "../components/BillyDialog";
 import DialogBox from "../components/DialogBox";
 import NextButton from "../components/NextButton";
+import { useUser } from "../context/UserContext";
 
 // Map names to user images
 const userImageMap: Record<string, string> = {
@@ -35,6 +36,7 @@ function getGenderFromName(name: string): "boy" | "girl" | null {
 
 export default function IslandPage() {
   const router = useRouter();
+  const { setUser } = useUser();
   // Wait for user interaction before starting typewriter to enable audio
   const [isReady, setIsReady] = useState(false);
   const [useTypewriter, setUseTypewriter] = useState(false);
@@ -101,6 +103,11 @@ export default function IslandPage() {
     const detectedGender = getGenderFromName(name);
     if (detectedGender) {
       setGender(detectedGender);
+    }
+    // Save user image to context for display across all pages
+    const userImage = getUserImage(name);
+    if (userImage) {
+      setUser(name.trim(), userImage);
     }
     setStage("showPlayer");
   };

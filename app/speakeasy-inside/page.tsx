@@ -8,6 +8,7 @@ import DialogBox from "../components/DialogBox";
 import PositionedItem from "../components/PositionedItem";
 import NextButton from "../components/NextButton";
 import SceneLoader from "../components/SceneLoader";
+import UserAvatar from "../components/UserAvatar";
 
 // All images used in this scene for preloading
 const SCENE_IMAGES = [
@@ -464,6 +465,7 @@ function SpeakeasyInsideContent() {
   return (
     <SceneLoader images={SCENE_IMAGES}>
     <main className="screen-container game-wrapper">
+      <UserAvatar />
       <div
         className="game-container bg-cover bg-center"
         style={{ backgroundImage: `url('/assets/scenes/speakeasy/Speakeasy%20Empty.png')` }}
@@ -536,9 +538,9 @@ function SpeakeasyInsideContent() {
                 style={{
                   width: 200,
                   height: 300,
-                  // Use actual tilt angle directly - matches device orientation
-                  // Clamp between -90 and 90 degrees, lock at final angle when complete
-                  transform: `rotate(${pourComplete ? Math.max(-90, Math.min(90, finalTiltAngle)) : Math.max(-90, Math.min(90, tiltAngle))}deg)`,
+                  // Amplify tilt by 2x so 90° phone tilt = 180° visual rotation (fully upside down)
+                  // Clamp between -180 and 180 degrees, lock at final angle when complete
+                  transform: `rotate(${pourComplete ? Math.max(-180, Math.min(180, finalTiltAngle * 2)) : Math.max(-180, Math.min(180, tiltAngle * 2))}deg)`,
                   // Use will-change for GPU acceleration, no CSS transition (handled by smoothing algorithm)
                   willChange: 'transform'
                 }}
@@ -618,12 +620,6 @@ function SpeakeasyInsideContent() {
               </p>
             )}
 
-            {/* Tilt instruction for lager-full step */}
-            {lagerStep === "lager-full" && (
-              <p className="mt-4 text-white text-sm text-center font-medium drop-shadow-lg animate-pulse">
-                Tap to continue...
-              </p>
-            )}
           </div>
           <DialogBox
             text={dialog.text}

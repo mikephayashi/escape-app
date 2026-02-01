@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import DialogBox from "../components/DialogBox";
 import NextButton from "../components/NextButton";
+import UserAvatar from "../components/UserAvatar";
 
 type DialogStage = "waiting" | "guh" | "mike-scold" | "help-request" | "done";
 
@@ -60,6 +61,7 @@ export default function GulliverPage() {
       className="screen-container relative bg-cover bg-center"
       style={{ backgroundImage: "url('/assets/scenes/gulliver/Gulliver.png')" }}
     >
+      <UserAvatar />
       <div className="mx-auto flex h-full w-full max-w-md flex-col items-center justify-end overflow-y-auto px-4 pb-8">
         <DialogBox
           text={getDialogText()}

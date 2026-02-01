@@ -6,6 +6,7 @@ import DialogBox, { DialogOverlay } from "../components/DialogBox";
 import BillyDialog from "../components/BillyDialog";
 import NextButton from "../components/NextButton";
 import PositionedItem from "../components/PositionedItem";
+import UserAvatar from "../components/UserAvatar";
 
 export default function LivingRoomPage() {
   // Wait for user interaction before starting typewriter to enable audio
@@ -82,6 +83,7 @@ export default function LivingRoomPage() {
 
   return (
     <main className="screen-container game-wrapper">
+      <UserAvatar />
       <div
         className="game-container bg-cover bg-center"
         style={{ backgroundImage: "url('/assets/scenes/living-room/Living%20Room%20Empty.png')" }}

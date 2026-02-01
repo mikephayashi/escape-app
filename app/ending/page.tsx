@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import DialogBox from "../components/DialogBox";
 import NextButton from "../components/NextButton";
+import UserAvatar from "../components/UserAvatar";
 
 type Stage =
   | "apple-eat"
@@ -117,6 +118,7 @@ export default function EndingPage() {
       className="screen-container relative bg-cover bg-center"
       style={{ backgroundImage: `url('${getBackgroundImage()}')` }}
     >
+      <UserAvatar />
       <div className="mx-auto flex h-full w-full max-w-md flex-col items-center justify-center overflow-y-auto px-4">
         {showItemImage && (
           <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/60">

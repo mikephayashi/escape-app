@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import DialogBox from "../components/DialogBox";
 import PositionedItem from "../components/PositionedItem";
+import UserAvatar from "../components/UserAvatar";
 
 const dialogLines = [
   "Oh do you have something for me? Wow a fossil!",
@@ -68,6 +69,7 @@ export default function MuseumEntrancePage() {
 
   return (
     <main className="screen-container game-wrapper" onPointerDown={handleScreenTap}>
+      <UserAvatar />
       <div
         className="game-container bg-cover bg-center"
         style={{ backgroundImage: `url('${backgroundImage}')` }}

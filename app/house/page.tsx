@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import BillyDialog from "../components/BillyDialog";
+import UserAvatar from "../components/UserAvatar";
 
 export default function HousePage() {
   const router = useRouter();
@@ -41,6 +42,7 @@ export default function HousePage() {
       style={{ backgroundImage: `url('${backgroundImage}')` }}
       onPointerDown={handleScreenTap}
     >
+      <UserAvatar />
       <div className="mx-auto flex h-full w-full max-w-md flex-col items-center overflow-y-auto px-4 pt-16">
         <BillyDialog
           text={dialogText}

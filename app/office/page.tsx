@@ -6,6 +6,7 @@ import PositionedItem from "../components/PositionedItem";
 import BillyDialog from "../components/BillyDialog";
 import DialogBox from "../components/DialogBox";
 import NextButton from "../components/NextButton";
+import UserAvatar from "../components/UserAvatar";
 import { useSpeechRecognition } from "../hooks/useSpeechRecognition";
 
 export default function OfficePage() {
@@ -85,6 +86,7 @@ export default function OfficePage() {
 
   return (
     <main className="screen-container game-wrapper">
+      <UserAvatar />
       <div
         className="game-container bg-cover bg-center"
         style={{ backgroundImage: "url('/assets/scenes/office/Office%20empty.png')" }}

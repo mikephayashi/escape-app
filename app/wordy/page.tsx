@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import UserAvatar from "../components/UserAvatar";
 
 const ANSWER = "LAGER";
 const WORD_LENGTH = 5;
@@ -194,6 +195,7 @@ export default function WordyPage() {
 
   return (
     <main className="screen-container game-wrapper">
+      <UserAvatar />
       <div
         className="game-container flex flex-col items-center justify-between bg-cover bg-center py-4 pb-[max(1rem,env(safe-area-inset-bottom))]"
         style={{ backgroundImage: `url('/assets/scenes/speakeasy/Wood.png')` }}

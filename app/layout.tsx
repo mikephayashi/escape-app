@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { UserProvider } from "./context/UserContext";
 
 export const metadata: Metadata = {
   title: "Escape App",
@@ -71,7 +72,9 @@ export default function RootLayout({
         ))}
       </head>
       <body className="antialiased">
-        {children}
+        <UserProvider>
+          {children}
+        </UserProvider>
       </body>
     </html>
   );
