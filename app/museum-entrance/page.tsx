@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import DialogBox from "../components/DialogBox";
 import PositionedItem from "../components/PositionedItem";
+import SceneContainer from "../components/SceneContainer";
 import SceneLoader from "../components/SceneLoader";
 import UserAvatar from "../components/UserAvatar";
 
@@ -79,11 +80,12 @@ export default function MuseumEntrancePage() {
 
   return (
     <SceneLoader images={SCENE_IMAGES}>
-    <main className="screen-container game-wrapper" onPointerDown={handleScreenTap}>
+    <main className="screen-container" onPointerDown={handleScreenTap}>
       <UserAvatar />
-      <div
-        className="game-container bg-cover bg-center"
-        style={{ backgroundImage: `url('${backgroundImage}')` }}
+      <SceneContainer
+        backgroundSrc={backgroundImage}
+        backgroundAlt="Museum entrance"
+        aspectRatio={2 / 3}
       >
       <div className="mx-auto flex h-full w-full max-w-md flex-col items-center overflow-y-auto px-4 pt-16">
         <DialogBox
@@ -122,7 +124,7 @@ export default function MuseumEntrancePage() {
           </PositionedItem>
         </div>
       ) : null}
-      </div>
+      </SceneContainer>
     </main>
     </SceneLoader>
   );

@@ -6,6 +6,7 @@ import DialogBox from "../components/DialogBox";
 import ChoiceButtons from "../components/ChoiceButtons";
 import PositionedItem from "../components/PositionedItem";
 import NextButton from "../components/NextButton";
+import SceneContainer from "../components/SceneContainer";
 import SceneLoader from "../components/SceneLoader";
 import UserAvatar from "../components/UserAvatar";
 
@@ -139,11 +140,12 @@ export default function NooksCrannyInsidePage() {
 
   return (
     <SceneLoader images={SCENE_IMAGES}>
-    <main className="screen-container game-wrapper">
+    <main className="screen-container">
       <UserAvatar />
-      <div
-        className="game-container bg-cover bg-center"
-        style={{ backgroundImage: "url('/assets/scenes/nooks-cranny/Interior.png')" }}
+      <SceneContainer
+        backgroundSrc="/assets/scenes/nooks-cranny/Interior.png"
+        backgroundAlt="Nook's Cranny interior"
+        aspectRatio={2 / 3}
       >
         {/* Background items layer - non-interactive */}
         <div className="pointer-events-none absolute inset-0 z-0">
@@ -311,7 +313,7 @@ export default function NooksCrannyInsidePage() {
         {gamePhase === "complete" ? (
           <NextButton href="/ending" isVisible={true} />
         ) : null}
-      </div>
+      </SceneContainer>
     </main>
     </SceneLoader>
   );

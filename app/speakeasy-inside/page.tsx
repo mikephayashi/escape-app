@@ -7,6 +7,7 @@ import BillyDialog from "../components/BillyDialog";
 import DialogBox from "../components/DialogBox";
 import PositionedItem from "../components/PositionedItem";
 import NextButton from "../components/NextButton";
+import SceneContainer from "../components/SceneContainer";
 import SceneLoader from "../components/SceneLoader";
 import UserAvatar from "../components/UserAvatar";
 
@@ -461,13 +462,17 @@ function SpeakeasyInsideContent() {
     }
   };
 
+  // Speakeasy background is 1024x1536 pixels = 2:3 aspect ratio
+  const SPEAKEASY_ASPECT_RATIO = 2 / 3;
+
   return (
     <SceneLoader images={SCENE_IMAGES}>
-    <main className="screen-container game-wrapper">
+    <main className="screen-container">
       <UserAvatar />
-      <div
-        className="game-container bg-cover bg-center"
-        style={{ backgroundImage: `url('/assets/scenes/speakeasy/Speakeasy%20Empty.png')` }}
+      <SceneContainer
+        backgroundSrc="/assets/scenes/speakeasy/Speakeasy%20Empty.png"
+        backgroundAlt="Speakeasy interior"
+        aspectRatio={SPEAKEASY_ASPECT_RATIO}
       >
       {/* Decorative items layer */}
       <div className="pointer-events-none absolute inset-0 z-0">
@@ -770,7 +775,7 @@ function SpeakeasyInsideContent() {
       {/* Next Button - shown after wordy result dialog is dismissed */}
       <NextButton href="/office" isVisible={showNextButton} />
 
-      </div>
+      </SceneContainer>
     </main>
     </SceneLoader>
   );

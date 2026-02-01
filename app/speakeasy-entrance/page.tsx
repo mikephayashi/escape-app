@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import BillyDialog from "../components/BillyDialog";
 import PositionedItem from "../components/PositionedItem";
+import SceneContainer from "../components/SceneContainer";
 import SceneLoader from "../components/SceneLoader";
 import UserAvatar from "../components/UserAvatar";
 
@@ -54,11 +55,12 @@ export default function SpeakeasyEntrancePage() {
 
   return (
     <SceneLoader images={SCENE_IMAGES}>
-    <main className="screen-container game-wrapper" onPointerDown={handleScreenTap}>
+    <main className="screen-container" onPointerDown={handleScreenTap}>
       <UserAvatar />
-      <div
-        className="game-container bg-cover bg-center"
-        style={{ backgroundImage: `url('/assets/scenes/speakeasy/speakeasy-entrance.png')` }}
+      <SceneContainer
+        backgroundSrc="/assets/scenes/speakeasy/speakeasy-entrance.png"
+        backgroundAlt="Speakeasy entrance"
+        aspectRatio={2 / 3}
       >
       <div className="pointer-events-none mx-auto flex h-full w-full max-w-md flex-col items-center overflow-y-auto px-4 pt-16">
         <BillyDialog
@@ -88,7 +90,7 @@ export default function SpeakeasyEntrancePage() {
           </PositionedItem>
         </div>
       ) : null}
-      </div>
+      </SceneContainer>
     </main>
     </SceneLoader>
   );

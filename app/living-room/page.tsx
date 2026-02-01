@@ -6,6 +6,7 @@ import DialogBox, { DialogOverlay } from "../components/DialogBox";
 import BillyDialog from "../components/BillyDialog";
 import NextButton from "../components/NextButton";
 import PositionedItem from "../components/PositionedItem";
+import SceneContainer from "../components/SceneContainer";
 import SceneLoader from "../components/SceneLoader";
 import UserAvatar from "../components/UserAvatar";
 
@@ -80,13 +81,17 @@ export default function LivingRoomPage() {
     }
   }, [zoomedItem]);
 
+  // Living room background is 704x1472 pixels
+  const LIVING_ROOM_ASPECT_RATIO = 704 / 1472;
+
   return (
     <SceneLoader images={SCENE_IMAGES}>
-    <main className="screen-container game-wrapper">
+    <main className="screen-container">
       <UserAvatar />
-      <div
-        className="game-container bg-cover bg-center"
-        style={{ backgroundImage: "url('/assets/scenes/living-room/Living%20Room%20Empty.png')" }}
+      <SceneContainer
+        backgroundSrc="/assets/scenes/living-room/Living%20Room%20Empty.png"
+        backgroundAlt="Living room"
+        aspectRatio={LIVING_ROOM_ASPECT_RATIO}
       >
       {livingRoomHintVisible && zoomedItem?.alt === "Sticky note" ? (
         <div
@@ -488,7 +493,7 @@ export default function LivingRoomPage() {
           <NextButton href="/museum-entrance" className="z-30" />
         </>
       ) : null}
-      </div>
+      </SceneContainer>
     </main>
     </SceneLoader>
   );

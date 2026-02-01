@@ -6,6 +6,7 @@ import DialogBox from "../components/DialogBox";
 import BillyDialog from "../components/BillyDialog";
 import PositionedItem from "../components/PositionedItem";
 import NextButton from "../components/NextButton";
+import SceneContainer from "../components/SceneContainer";
 import SceneLoader from "../components/SceneLoader";
 import UserAvatar from "../components/UserAvatar";
 
@@ -70,11 +71,12 @@ export default function MuseumPage() {
 
   return (
     <SceneLoader images={SCENE_IMAGES}>
-    <main className="screen-container game-wrapper">
+    <main className="screen-container">
       <UserAvatar />
-      <div
-        className="game-container bg-cover bg-center"
-        style={{ backgroundImage: `url('/assets/scenes/museum/Museum%20Empty.png')` }}
+      <SceneContainer
+        backgroundSrc="/assets/scenes/museum/Museum%20Empty.png"
+        backgroundAlt="Museum interior"
+        aspectRatio={2 / 3}
       >
       {/* Museum inside - display layer for items */}
       <div className="pointer-events-none absolute inset-0 z-0">
@@ -355,7 +357,7 @@ export default function MuseumPage() {
           <NextButton href="/speakeasy-entrance" className="z-30" />
         </>
       ) : null}
-      </div>
+      </SceneContainer>
     </main>
     </SceneLoader>
   );
