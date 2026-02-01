@@ -231,7 +231,7 @@ function SpeakeasyInsideContent() {
       return;
     }
     
-    if (lagerStep === "lager-full" && !isFadingBeer) {
+    if (lagerStep === "lager-full") {
       // Move to pouring step - user needs to tilt device
       setLagerStep("lager-pouring");
       return;
