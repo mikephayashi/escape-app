@@ -205,18 +205,21 @@ function SpeakeasyInsideContent() {
     const HISTORY_SIZE = 8; // Number of samples to average for smoothing
     
     const handleOrientation = (event: DeviceOrientationEvent) => {
-      // gamma is the left-to-right tilt in degrees (-90 to 90)
-      // Negative gamma = tilting left (counter-clockwise)
-      // Positive gamma = tilting right (clockwise)
-      const gamma = event.gamma;
+      // beta is the front-to-back tilt in degrees (-180 to 180)
+      // beta ~90 = phone held upright normally
+      // beta ~180 = phone tilted forward (top away from you, like pouring)
+      // beta ~0 = phone tilted backward (top toward you)
+      const beta = event.beta;
       
       // Check if we're getting real sensor data (not null/undefined)
-      if (gamma !== null && gamma !== undefined) {
+      if (beta !== null && beta !== undefined) {
         receivedValidData = true;
         setHasTiltSupport(true);
       }
       
-      const rawTilt = gamma ?? 0;
+      // Convert beta to pour angle: 0 = upright, positive = tilting forward to pour
+      // Normal holding is around beta=90, so subtract 90 to get pour angle
+      const rawTilt = (beta ?? 90) - 90;
       const now = performance.now();
       
       // Add to history buffer for moving average smoothing
@@ -321,8 +324,10 @@ function SpeakeasyInsideContent() {
         const permission = await DeviceOrientationEventTyped.requestPermission();
         if (permission === 'granted') {
           window.addEventListener('deviceorientation', (event: DeviceOrientationEvent) => {
-            const gamma = event.gamma;
-            const rawTilt = gamma ?? 0;
+            // beta is the front-to-back tilt (-180 to 180)
+            // Normal holding is ~90, tilting forward to pour increases toward 180
+            const beta = event.beta;
+            const rawTilt = (beta ?? 90) - 90;
             const now = performance.now();
             
             // Add to history buffer for moving average smoothing
