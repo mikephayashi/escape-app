@@ -1,11 +1,30 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState, useRef } from "react";
 
 export default function Home() {
   const [audioAcknowledged, setAudioAcknowledged] = useState(false);
+  const [isPlayingVideo, setIsPlayingVideo] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const router = useRouter();
+
+  const handleStartGame = () => {
+    setIsPlayingVideo(true);
+    // Play video after a short delay to ensure it's ready
+    setTimeout(() => {
+      videoRef.current?.play();
+    }, 100);
+  };
+
+  const handleVideoEnd = () => {
+    router.push("/island");
+  };
+
+  const handleSkipVideo = () => {
+    router.push("/island");
+  };
 
   return (
     <main
@@ -14,8 +33,30 @@ export default function Home() {
         backgroundImage: "url('/assets/shared/backgrounds/island-background.png')",
       }}
     >
+      {/* Video Player Overlay */}
+      {isPlayingVideo && (
+        <div className="absolute inset-0 z-[100] flex items-center justify-center bg-black">
+          <video
+            ref={videoRef}
+            src="/assets/videos/Wedding_Plane_Crash_Video_Generated.mp4"
+            className="h-full w-full object-contain"
+            onEnded={handleVideoEnd}
+            playsInline
+            autoPlay
+          />
+          {/* Skip Button */}
+          <button
+            onClick={handleSkipVideo}
+            className="absolute bottom-8 right-8 rounded-full bg-white/20 px-6 py-2 text-white backdrop-blur-sm transition-all hover:bg-white/30"
+            style={{ fontFamily: "FinkHeavy, sans-serif" }}
+          >
+            Skip →
+          </button>
+        </div>
+      )}
+
       {/* Audio Prompt Overlay */}
-      {!audioAcknowledged && (
+      {!audioAcknowledged && !isPlayingVideo && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/70">
           <div
             className="mx-4 max-w-md rounded-3xl border-4 border-amber-800 bg-amber-50 p-8 text-center shadow-2xl"
@@ -52,9 +93,10 @@ export default function Home() {
       )}
 
       {/* Start Button - only clickable after audio acknowledged */}
-      <Link 
-        href="/island"
+      <button 
+        onClick={handleStartGame}
         className={!audioAcknowledged ? "pointer-events-none opacity-50" : ""}
+        disabled={!audioAcknowledged}
       >
         <Image
           src="/assets/shared/ui/Start%20Button.svg"
@@ -63,7 +105,7 @@ export default function Home() {
           height={200}
           priority
         />
-      </Link>
+      </button>
     </main>
   );
 }

@@ -29,3 +29,4 @@ export default function UserAvatar({ className = "" }: UserAvatarProps) {
     </div>
   );
 }
+
