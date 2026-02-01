@@ -10,7 +10,7 @@ interface UserAvatarProps {
 }
 
 export default function UserAvatar({ className = "" }: UserAvatarProps) {
-  const { userImage, userName, isConfirmed } = useUser();
+  const { userImage, userName, isConfirmed, markPhotoUploaded, markUploadFailed } = useUser();
   const [showModal, setShowModal] = useState(false);
   const [showGallery, setShowGallery] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -49,12 +49,15 @@ export default function UserAvatar({ className = "" }: UserAvatarProps) {
 
       if (res.ok) {
         setUploadStatus("✅ Photo uploaded!");
+        markPhotoUploaded();
         setTimeout(() => setUploadStatus(""), 2000);
       } else {
         setUploadStatus(`❌ ${data.error}`);
+        markUploadFailed();
       }
     } catch (error) {
       setUploadStatus("❌ Upload failed");
+      markUploadFailed();
     } finally {
       setIsUploading(false);
       // Reset file input

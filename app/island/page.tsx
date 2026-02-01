@@ -53,14 +53,14 @@ function getGenderFromName(name: string): "boy" | "girl" | null {
 
 export default function IslandPage() {
   const router = useRouter();
-  const { setUser } = useUser();
+  const { setUser, hasUploadedPhoto, uploadFailed } = useUser();
   // Wait for user interaction before starting typewriter to enable audio
   const [isReady, setIsReady] = useState(false);
   const [useTypewriter, setUseTypewriter] = useState(false);
   const [isNameInputVisible, setIsNameInputVisible] = useState(false);
   const [name, setName] = useState("");
   const [gender, setGender] = useState<"boy" | "girl" | null>(null);
-  const [stage, setStage] = useState<"intro" | "greeting" | "showPlayer" | "wakeup" | "trichael" | "choices">("intro");
+  const [stage, setStage] = useState<"intro" | "greeting" | "photoPrompt" | "showPlayer" | "wakeup" | "trichael" | "choices">("intro");
   const [dialogText, setDialogText] = useState("Tap to continue");
   const [backgroundImage] = useState(
     "/assets/shared/backgrounds/island-background.png",
@@ -126,6 +126,11 @@ export default function IslandPage() {
     if (userImage) {
       setUser(name.trim(), userImage);
     }
+    // Show photo prompt before continuing
+    setStage("photoPrompt");
+  };
+
+  const handlePhotoPromptContinue = () => {
     setStage("showPlayer");
   };
 
@@ -164,7 +169,70 @@ export default function IslandPage() {
     >
       <UserAvatar />
       <div className="mx-auto flex h-full w-full max-w-md flex-col items-center overflow-y-auto px-4 pt-16">
-        {stage === "greeting" && getUserImage(name) ? (
+        {stage === "photoPrompt" ? (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/70">
+            {/* Animated arrow pointing to the actual avatar in top-left */}
+            {!hasUploadedPhoto && !uploadFailed && (
+              <div className="fixed left-16 top-3 z-[60] animate-pulse">
+                <div className="flex items-center">
+                  <span className="text-5xl drop-shadow-lg">👆</span>
+                  <span 
+                    className="ml-1 rounded-lg bg-amber-400 px-3 py-1 text-sm font-bold text-amber-900 shadow-lg"
+                    style={{ fontFamily: "FinkHeavy, sans-serif" }}
+                  >
+                    Click here!
+                  </span>
+                </div>
+              </div>
+            )}
+
+            <div className="mx-4 flex flex-col items-center gap-6 rounded-3xl border-4 border-amber-400 bg-amber-50 p-8 shadow-2xl">
+              <div className="text-center">
+                <h2 
+                  className="mb-4 text-2xl text-amber-900"
+                  style={{ fontFamily: "FinkHeavy, sans-serif" }}
+                >
+                  📷 Photo Challenge!
+                </h2>
+                <p className="mb-4 text-lg text-amber-800">
+                  Throughout your adventure, you may need to <strong>take photos</strong> to complete challenges!
+                </p>
+                <p className="mb-6 text-lg text-amber-800">
+                  Tap your <strong>avatar in the top left corner</strong> anytime to upload a photo.
+                </p>
+                
+                {hasUploadedPhoto ? (
+                  <div className="mb-4 rounded-xl bg-green-100 p-4 text-green-700 border-2 border-green-400">
+                    <p className="text-lg font-bold">✅ Photo uploaded! Great job!</p>
+                  </div>
+                ) : uploadFailed ? (
+                  <div className="mb-4 rounded-xl bg-amber-100 p-4 text-amber-700 border-2 border-amber-400">
+                    <p className="text-sm font-semibold">⚠️ Upload had an issue, but you can continue!</p>
+                    <p className="text-xs mt-1">You can try uploading again later.</p>
+                  </div>
+                ) : (
+                  <div className="mb-4 rounded-xl bg-red-100 p-4 text-red-700 border-2 border-red-300">
+                    <p className="text-sm font-semibold">⚠️ Take a selfie now to continue!</p>
+                    <p className="text-xs mt-1">Click your avatar above and upload a photo.</p>
+                  </div>
+                )}
+              </div>
+              
+              <button
+                onClick={handlePhotoPromptContinue}
+                disabled={!hasUploadedPhoto && !uploadFailed}
+                className={`rounded-full px-8 py-4 text-xl text-white shadow-lg transition-all ${
+                  hasUploadedPhoto || uploadFailed
+                    ? "bg-green-600 hover:scale-105 hover:bg-green-500 active:scale-95" 
+                    : "bg-gray-400 cursor-not-allowed opacity-60"
+                }`}
+                style={{ fontFamily: "FinkHeavy, sans-serif" }}
+              >
+                {hasUploadedPhoto ? "Got it! Let's go! →" : uploadFailed ? "Continue anyway →" : "📷 Upload photo to continue"}
+              </button>
+            </div>
+          </div>
+        ) : stage === "greeting" && getUserImage(name) ? (
           <>
             <div className="absolute inset-0 flex items-center justify-center bg-black/60" style={{ paddingTop: "2vh" }}>
               <div className="flex flex-col items-center gap-3">
