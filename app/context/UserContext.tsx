@@ -21,9 +21,10 @@ export function UserProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const storedName = localStorage.getItem("userName");
     const storedImage = localStorage.getItem("userImage");
+    const storedConfirmed = localStorage.getItem("userConfirmed");
     if (storedName) setUserName(storedName);
     if (storedImage) setUserImage(storedImage);
-    // Don't set isConfirmed here - user must confirm each session
+    if (storedConfirmed === "true") setIsConfirmed(true);
   }, []);
 
   const setUser = (name: string, image: string) => {
@@ -32,6 +33,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     setIsConfirmed(true);
     localStorage.setItem("userName", name);
     localStorage.setItem("userImage", image);
+    localStorage.setItem("userConfirmed", "true");
   };
 
   const clearUser = () => {
@@ -40,6 +42,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     setIsConfirmed(false);
     localStorage.removeItem("userName");
     localStorage.removeItem("userImage");
+    localStorage.removeItem("userConfirmed");
   };
 
   return (
