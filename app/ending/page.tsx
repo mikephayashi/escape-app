@@ -147,7 +147,7 @@ export default function EndingPage() {
             characterImage={
               stage === "trichael"
                 ? {
-                    src: "/assets/shared/characters/Trichael.png",
+                    src: "/assets/shared/characters/trichael-wedding.png",
                     alt: "Trichael",
                     width: 220,
                     height: 220,

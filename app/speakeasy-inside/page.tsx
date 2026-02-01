@@ -550,8 +550,8 @@ function SpeakeasyInsideContent() {
             {lagerStep === "lager-pouring" && !pourComplete && (
               <p className="mt-4 text-white text-sm text-center font-medium drop-shadow-lg">
                 {hasTiltSupport === true && !tiltPermissionRequested && typeof (DeviceOrientationEvent as unknown as { requestPermission?: unknown }).requestPermission === 'function'
-                  ? "Tap to enable tilt"
-                  : "Tilt to pour! 🍺"
+                  ? "Tap to begin"
+                  : "Drink up! 🍺"
                 }
               </p>
             )}
