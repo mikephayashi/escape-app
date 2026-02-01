@@ -249,24 +249,24 @@ function SpeakeasyInsideContent() {
       {/* Zoomed item display */}
       {zoomedItem ? (
         <div className="pointer-events-none absolute left-1/2 top-1/2 w-[90%] max-w-sm -translate-x-1/2 -translate-y-1/2 z-20">
-          <div className="flex justify-center">
-            <div className="relative">
+          <div className="flex items-center justify-center">
+            <div className="relative flex items-center justify-center">
               <Image
                 src={zoomedItem.src}
                 alt={zoomedItem.alt}
                 width={
                   zoomedItem.alt === "Napkin" ? 352 :
-                  (lagerStep === "lager-empty" || lagerStep === "lager-full") ? 240 : 176
+                  (lagerStep === "lager-dialog" || lagerStep === "lager-empty" || lagerStep === "lager-full") ? 168 : 176
                 }
                 height={
                   zoomedItem.alt === "Napkin" ? 352 :
-                  (lagerStep === "lager-empty" || lagerStep === "lager-full") ? 360 : 176
+                  (lagerStep === "lager-dialog" || lagerStep === "lager-empty" || lagerStep === "lager-full") ? 252 : 176
                 }
                 className={`h-auto w-auto object-contain transition-opacity duration-[2000ms] ${
                   isFadingBeer ? "opacity-0" : "opacity-100"
                 } ${
                   zoomedItem.alt === "Napkin" ? "max-h-[352px] max-w-[352px]" :
-                  (lagerStep === "lager-empty" || lagerStep === "lager-full") ? "max-h-[360px] max-w-[240px]" :
+                  (lagerStep === "lager-dialog" || lagerStep === "lager-empty" || lagerStep === "lager-full") ? "max-h-[252px] max-w-[168px]" :
                   "max-h-44 max-w-44"
                 }`}
                 priority

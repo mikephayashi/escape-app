@@ -92,7 +92,9 @@ export default function TypewriterText({
 
   // Play audio when typing starts and audio is ready
   useEffect(() => {
-    if (!enableAudio || !text || !isTyping) {
+    // Use isTypingRef.current instead of isTyping state to avoid race condition
+    // The typing effect updates the ref synchronously before this effect runs
+    if (!enableAudio || !text || !isTypingRef.current) {
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.currentTime = 0;
@@ -159,4 +161,3 @@ export default function TypewriterText({
 
   return <span>{visibleText}</span>;
 }
-

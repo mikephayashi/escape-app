@@ -188,6 +188,7 @@ export default function OfficePage() {
                           key: "mic-correct",
                           text: "Oh, are you lost? I think Gulliver might be able to get you home. He should be on the beach.",
                           speaker: "Isabelle",
+                          useTypewriter: true,
                         });
                         return true;
                       }
