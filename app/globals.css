@@ -111,23 +111,13 @@
   background: #000; /* Black letterboxing for different aspect ratios */
 }
 
-/* Inner container that maintains the background image's aspect ratio */
-/* This ensures positioned items align correctly with the background */
+/* Inner container - dimensions set by JavaScript to maintain exact aspect ratio */
+/* This ensures positioned items align correctly with the background on all devices */
 .scene-inner {
   position: relative;
-  max-width: 100%;
-  max-height: 100%;
-  width: auto;
-  height: 100%;
   overflow: hidden;
-}
-
-/* On very wide screens, constrain by width instead of height */
-@media (min-aspect-ratio: 2/3) {
-  .scene-inner {
-    width: 100%;
-    height: auto;
-  }
+  /* Prevent any flex shrinking */
+  flex-shrink: 0;
 }
 
 /* Support for iOS Safari safe areas */
