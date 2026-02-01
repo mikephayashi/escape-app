@@ -44,8 +44,8 @@ function SpeakeasyInsideContent() {
   const [showBrewsterChoice, setShowBrewsterChoice] = useState(false);
   const [showNextButton, setShowNextButton] = useState(false);
   const [wordyHandled, setWordyHandled] = useState(false);
-  // Lager drinking flow: "lager-dialog" → "lager-full" → "lager-pouring" → "lager-empty" → "brewster-final"
-  const [lagerStep, setLagerStep] = useState<"lager-dialog" | "lager-full" | "lager-pouring" | "lager-empty" | "brewster-final" | null>(null);
+  // Lager drinking flow: "lager-dialog" → "lager-pouring" → "lager-empty" → "brewster-final"
+  const [lagerStep, setLagerStep] = useState<"lager-dialog" | "lager-pouring" | "lager-empty" | "brewster-final" | null>(null);
   // Tilt detection states
   const [tiltAngle, setTiltAngle] = useState(0); // Actual rotation angle (can be negative or positive)
   const [hasTiltSupport, setHasTiltSupport] = useState<boolean | null>(null);
@@ -395,14 +395,8 @@ function SpeakeasyInsideContent() {
 
     // Handle lager drinking flow
     if (lagerStep === "lager-dialog") {
-      // Dismiss dialog, show large beer with tilt instruction
+      // Dismiss dialog, go straight to pouring step
       setDialog((current) => ({ ...current, isVisible: false }));
-      setLagerStep("lager-full");
-      return;
-    }
-    
-    if (lagerStep === "lager-full") {
-      // Move to pouring step - user needs to tilt device
       setLagerStep("lager-pouring");
       return;
     }
@@ -593,15 +587,15 @@ function SpeakeasyInsideContent() {
                   alt={zoomedItem.alt}
                   width={
                     zoomedItem.alt === "Napkin" ? 352 :
-                    (lagerStep === "lager-dialog" || lagerStep === "lager-empty" || lagerStep === "lager-full") ? 168 : 176
+                    (lagerStep === "lager-dialog" || lagerStep === "lager-empty") ? 168 : 176
                   }
                   height={
                     zoomedItem.alt === "Napkin" ? 352 :
-                    (lagerStep === "lager-dialog" || lagerStep === "lager-empty" || lagerStep === "lager-full") ? 252 : 176
+                    (lagerStep === "lager-dialog" || lagerStep === "lager-empty") ? 252 : 176
                   }
                   className={`h-auto w-auto object-contain ${
                     zoomedItem.alt === "Napkin" ? "max-h-[352px] max-w-[352px]" :
-                    (lagerStep === "lager-dialog" || lagerStep === "lager-empty" || lagerStep === "lager-full") ? "max-h-[252px] max-w-[168px]" :
+                    (lagerStep === "lager-dialog" || lagerStep === "lager-empty") ? "max-h-[252px] max-w-[168px]" :
                     "max-h-44 max-w-44"
                   }`}
                   priority
