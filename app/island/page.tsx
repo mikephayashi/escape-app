@@ -55,7 +55,7 @@ export default function IslandPage() {
     // Handle initial tap to start the typewriter dialog with audio
     if (!isReady && stage === "intro") {
       setIsReady(true);
-      setDialogText("Welcome to Maui, Hawaii . . . What is your name?");
+      setDialogText("Aloha welcome to a remote Hawaiian island . . . What is your name?");
       setUseTypewriter(true);
       return;
     }
@@ -115,7 +115,7 @@ export default function IslandPage() {
 
   const handleNotMe = () => {
     setName("");
-    setDialogText("Welcome to Maui, Hawaii . . . What is your name?");
+    setDialogText("Aloha welcome to a remote Hawaiian island . . . What is your name?");
     setIsNameInputVisible(true);
     setStage("intro");
   };
