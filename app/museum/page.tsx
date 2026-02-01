@@ -68,10 +68,11 @@ export default function MuseumPage() {
     );
 
   return (
-    <main
-      className="screen-container relative bg-cover bg-center"
-      style={{ backgroundImage: `url('/assets/scenes/museum/Museum%20Empty.png')` }}
-    >
+    <main className="screen-container game-wrapper">
+      <div
+        className="game-container bg-cover bg-center"
+        style={{ backgroundImage: `url('/assets/scenes/museum/Museum%20Empty.png')` }}
+      >
       {/* Museum inside - display layer for items */}
       <div className="pointer-events-none absolute inset-0 z-0">
         {/* Portraits on the wall */}
@@ -351,6 +352,7 @@ export default function MuseumPage() {
           <NextButton href="/speakeasy-entrance" className="z-30" />
         </>
       ) : null}
+      </div>
     </main>
   );
 }

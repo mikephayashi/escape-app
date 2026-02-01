@@ -63,10 +63,11 @@ export default function LivingRoomPage() {
   }, [zoomedItem]);
 
   return (
-    <main
-      className="screen-container relative bg-cover bg-center"
-      style={{ backgroundImage: "url('/assets/scenes/living-room/Living%20Room%20Empty.png')" }}
-    >
+    <main className="screen-container game-wrapper">
+      <div
+        className="game-container bg-cover bg-center"
+        style={{ backgroundImage: "url('/assets/scenes/living-room/Living%20Room%20Empty.png')" }}
+      >
       {livingRoomHintVisible && zoomedItem?.alt === "Sticky note" ? (
         <div
           className="pointer-events-auto absolute inset-0 z-40 bg-black/50"
@@ -463,6 +464,7 @@ export default function LivingRoomPage() {
           <NextButton href="/museum-entrance" className="z-30" />
         </>
       ) : null}
+      </div>
     </main>
   );
 }

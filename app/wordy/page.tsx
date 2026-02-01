@@ -193,17 +193,18 @@ export default function WordyPage() {
   }
 
   return (
-    <main
-      className="screen-container relative flex flex-col items-center justify-between bg-cover bg-center py-4 pb-[max(1rem,env(safe-area-inset-bottom))]"
-      style={{ backgroundImage: `url('/assets/scenes/speakeasy/Wood.png')` }}
-    >
+    <main className="screen-container game-wrapper">
+      <div
+        className="game-container flex flex-col items-center justify-between bg-cover bg-center py-4 pb-[max(1rem,env(safe-area-inset-bottom))]"
+        style={{ backgroundImage: `url('/assets/scenes/speakeasy/Wood.png')` }}
+      >
       {/* Wordy title at the top */}
-      <div className="flex shrink-0 justify-center">
+      <div className="flex h-16 shrink-0 items-center justify-center">
         <Image
           src="/assets/scenes/speakeasy/Wordy.png"
           alt="Wordy"
-          width={180}
-          height={60}
+          width={200}
+          height={50}
           className="h-auto w-auto max-w-[50%] object-contain drop-shadow-lg"
           priority
         />
@@ -298,6 +299,7 @@ export default function WordyPage() {
           animation: shake 0.5s ease-in-out;
         }
       `}</style>
+      </div>
     </main>
   );
 }

@@ -192,13 +192,14 @@ function SpeakeasyInsideContent() {
   };
 
   return (
-    <main
-      className="screen-container relative bg-cover bg-center"
-      style={{ backgroundImage: `url('/assets/scenes/speakeasy/Speakeasy%20Empty.png')` }}
-    >
+    <main className="screen-container game-wrapper">
+      <div
+        className="game-container bg-cover bg-center"
+        style={{ backgroundImage: `url('/assets/scenes/speakeasy/Speakeasy%20Empty.png')` }}
+      >
       {/* Decorative items layer */}
       <div className="pointer-events-none absolute inset-0 z-0">
-        <PositionedItem left="25%" top="0%" width="40%" aspectRatio="1024 / 1536">
+        <PositionedItem left="25%" top="0%" width="30%" aspectRatio="1024 / 1536">
           <Image
             src="/assets/scenes/speakeasy/Light.png"
             alt="Light"
@@ -208,7 +209,7 @@ function SpeakeasyInsideContent() {
             priority
           />
         </PositionedItem>
-        <PositionedItem left="25%" top="50%" width="60%" aspectRatio="1024 / 1536">
+        <PositionedItem left="35%" top="55%" width="40%" aspectRatio="1024 / 1536">
           <Image
             src="/assets/scenes/speakeasy/Chair.png"
             alt="Chair"
@@ -217,7 +218,7 @@ function SpeakeasyInsideContent() {
             className="object-contain"
           />
         </PositionedItem>
-        <PositionedItem left="20%" top="37%" width="30%" aspectRatio="1024 / 1536">
+        <PositionedItem left="25%" top="37%" width="20%" aspectRatio="1024 / 1536">
           <Image
             src="/assets/scenes/speakeasy/Beer.png"
             alt="Beer"
@@ -226,7 +227,7 @@ function SpeakeasyInsideContent() {
             className="object-contain"
           />
         </PositionedItem>
-        <PositionedItem left="5%" top="42%" width="25%" aspectRatio="1024 / 1536">
+        <PositionedItem left="5%" top="42%" width="20%" aspectRatio="1024 / 1536">
           <Image
             src="/assets/scenes/speakeasy/Napkin.png"
             alt="Napkin"
@@ -302,7 +303,7 @@ function SpeakeasyInsideContent() {
             className="pointer-events-auto"
             left="25%"
             top="0%"
-            width="40%"
+            width="30%"
             aspectRatio="1024 / 1536"
             onClick={() => {
               setZoomedItem({
@@ -325,9 +326,9 @@ function SpeakeasyInsideContent() {
             type="button"
             aria-label="Chair"
             className="pointer-events-auto"
-            left="25%"
-            top="50%"
-            width="60%"
+            left="35%"
+            top="55%"
+            width="40%"
             aspectRatio="1024 / 1536"
             onClick={() => {
               setZoomedItem({
@@ -350,9 +351,9 @@ function SpeakeasyInsideContent() {
             type="button"
             aria-label="Beer"
             className="pointer-events-auto"
-            left="20%"
+            left="25%"
             top="37%"
-            width="30%"
+            width="20%"
             aspectRatio="1024 / 1536"
             onClick={() => {
               setZoomedItem({
@@ -377,7 +378,7 @@ function SpeakeasyInsideContent() {
             className="pointer-events-auto"
             left="5%"
             top="42%"
-            width="25%"
+            width="20%"
             aspectRatio="1024 / 1536"
             onClick={() => {
               // Show Sticky instead of Napkin when clicked
@@ -430,6 +431,7 @@ function SpeakeasyInsideContent() {
       {/* Next Button - shown after wordy result dialog is dismissed */}
       <NextButton href="/office" isVisible={showNextButton} />
 
+      </div>
     </main>
   );
 }

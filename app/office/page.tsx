@@ -81,10 +81,11 @@ export default function OfficePage() {
   };
 
   return (
-    <main
-      className="screen-container relative bg-cover bg-center"
-      style={{ backgroundImage: "url('/assets/scenes/office/Office%20empty.png')" }}
-    >
+    <main className="screen-container game-wrapper">
+      <div
+        className="game-container bg-cover bg-center"
+        style={{ backgroundImage: "url('/assets/scenes/office/Office%20empty.png')" }}
+      >
       {/* Office items - display layer */}
       <div className="pointer-events-none absolute inset-0 z-0">
         {/* Computer on desk */}
@@ -99,7 +100,7 @@ export default function OfficePage() {
         </PositionedItem>
 
         {/* Microphone on desk */}
-        <PositionedItem left="25%" top="30%" width="70%" aspectRatio="1024 / 1024">
+        <PositionedItem left="20%" top="30%" width="70%" aspectRatio="1024 / 1024">
           <Image
             src="/assets/scenes/office/Microphone.png"
             alt="Microphone"
@@ -323,7 +324,7 @@ export default function OfficePage() {
             type="button"
             aria-label="Microphone"
             className="pointer-events-auto"
-            left="25%"
+            left="20%"
             top="30%"
             width="70%"
             aspectRatio="1024 / 1024"
@@ -432,6 +433,7 @@ export default function OfficePage() {
           <NextButton href="/gulliver" className="z-30" />
         </>
       ) : null}
+      </div>
     </main>
   );
 }

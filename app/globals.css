@@ -63,14 +63,39 @@
   overflow: hidden !important;
 }
 
-/* Container for pages with positioned items that need to match a background */
-/* Uses viewport height units to ensure consistent positioning */
-.game-screen {
-  position: relative !important;
-  width: 100% !important;
-  min-height: 100% !important;
-  min-height: 100dvh !important;
-  overflow: hidden !important;
+/* Fixed aspect ratio container for game screens with positioned items */
+/* Maintains consistent positioning across all screen sizes */
+.game-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* 9:16 aspect ratio (common mobile portrait) - adjust if your images differ */
+  aspect-ratio: 9 / 16;
+  /* Fill height first, then constrain width by aspect ratio */
+  height: 100%;
+  max-width: 100%;
+  /* If screen is wider than 9:16, limit by width instead */
+  width: auto;
+  overflow: hidden;
+}
+
+/* For screens wider than 9:16, switch to width-based sizing */
+@media (min-aspect-ratio: 9/16) {
+  .game-container {
+    width: 100%;
+    height: auto;
+    max-height: 100%;
+  }
+}
+
+/* Wrapper to provide the positioning context */
+.game-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000; /* Black letterboxing */
 }
 
 /* Support for iOS Safari safe areas */
