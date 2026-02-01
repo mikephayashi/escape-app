@@ -1,11 +1,5 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "./globals.css";
-
-const finkHeavy = localFont({
-  src: "../public/assets/shared/fonts/FinkHeavy.ttf",
-  variable: "--font-fink-heavy",
-});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -18,7 +12,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={finkHeavy.variable}>
+    <html lang="en">
       <body className="antialiased">
         {children}
       </body>
