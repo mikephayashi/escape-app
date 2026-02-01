@@ -94,8 +94,17 @@ export function useSpeechRecognition(): SpeechRecognitionHook {
         setError("Microphone access denied. Please allow microphone access.");
       } else if (event.error === "no-speech") {
         setError("No speech detected. Try again.");
+      } else if (
+        event.error === "service-not-allowed" ||
+        event.error === "network" ||
+        event.error === "audio-capture"
+      ) {
+        // These errors indicate the service isn't available (common on iOS Chrome)
+        setError("Voice input is only supported on Safari. Please type the code instead.");
+        setIsSupported(false);
       } else {
-        setError(`Error: ${event.error}`);
+        setError("Voice input is only supported on Safari. Please type the code instead.");
+        setIsSupported(false);
       }
       setIsListening(false);
     };

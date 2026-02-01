@@ -57,6 +57,8 @@ function SpeakeasyInsideContent() {
   // Pouring sound effect
   const pourAudioRef = useRef<HTMLAudioElement | null>(null);
   const [isPouring, setIsPouring] = useState(false);
+  // Track when pour is complete (to keep showing empty beer with next button)
+  const [pourComplete, setPourComplete] = useState(false);
 
   const showDialogFn = ({
     key,
@@ -91,8 +93,8 @@ function SpeakeasyInsideContent() {
   const triggerPourComplete = useCallback(() => {
     if (lagerStep !== "lager-pouring") return;
     
-    // Pour complete - keep mug visible, stop sound, show next button
-    setLagerStep(null);
+    // Pour complete - keep tilted mug visible, stop sound, show next button
+    setPourComplete(true);
     setIsPouring(false);
     lastTickRef.current = null;
     setShowNextButton(true);
@@ -103,11 +105,13 @@ function SpeakeasyInsideContent() {
     if (!pourAudioRef.current) {
       pourAudioRef.current = new Audio("/assets/shared/audio/pouring.mp3");
       pourAudioRef.current.loop = true;
+      pourAudioRef.current.volume = 0.7;
     }
     
     const audio = pourAudioRef.current;
     
-    if (isPouring && lagerStep === "lager-pouring") {
+    if (isPouring && lagerStep === "lager-pouring" && !pourComplete) {
+      audio.currentTime = 0;
       audio.play().catch(() => {
         // Autoplay may be blocked, that's okay
       });
@@ -118,7 +122,30 @@ function SpeakeasyInsideContent() {
     return () => {
       audio.pause();
     };
-  }, [isPouring, lagerStep]);
+  }, [isPouring, lagerStep, pourComplete]);
+
+  // Unlock audio on user interaction (needed for mobile)
+  useEffect(() => {
+    const unlockAudio = () => {
+      if (pourAudioRef.current) {
+        // Create and play a silent buffer to unlock audio
+        pourAudioRef.current.play().then(() => {
+          pourAudioRef.current?.pause();
+          pourAudioRef.current!.currentTime = 0;
+        }).catch(() => {});
+      }
+      document.removeEventListener('touchstart', unlockAudio);
+      document.removeEventListener('click', unlockAudio);
+    };
+    
+    document.addEventListener('touchstart', unlockAudio, { once: true });
+    document.addEventListener('click', unlockAudio, { once: true });
+    
+    return () => {
+      document.removeEventListener('touchstart', unlockAudio);
+      document.removeEventListener('click', unlockAudio);
+    };
+  }, []);
 
   // Handle wordy result or show intro dialog
   useEffect(() => {
@@ -445,13 +472,13 @@ function SpeakeasyInsideContent() {
         <div className="pointer-events-none absolute left-1/2 top-1/2 w-[90%] max-w-sm -translate-x-1/2 -translate-y-1/2 z-20">
           <div className="flex flex-col items-center justify-center">
             {/* Pouring mode - stacked layers with opacity control */}
-            {lagerStep === "lager-pouring" ? (
+            {(lagerStep === "lager-pouring" || pourComplete) ? (
               <div 
                 className="relative flex items-center justify-center transition-transform duration-100"
                 style={{
                   width: 200,
                   height: 300,
-                  transform: `rotate(-${Math.min(tiltAngle, 90)}deg)`
+                  transform: `rotate(-${pourComplete ? 90 : Math.min(tiltAngle, 90)}deg)`
                 }}
               >
                 {/* Bottom layer: Empty beer (15% smaller, shifted right and down) */}
@@ -473,8 +500,8 @@ function SpeakeasyInsideContent() {
                 <div 
                   className="absolute inset-0 flex items-center justify-center z-20 transition-opacity duration-150"
                   style={{
-                    // Opacity goes from 1 to 0 as pourProgress goes from 0 to 100
-                    opacity: Math.max(0, 1 - (pourProgress / 100))
+                    // Opacity goes from 1 to 0 as pourProgress goes from 0 to 100, or 0 when complete
+                    opacity: pourComplete ? 0 : Math.max(0, 1 - (pourProgress / 100))
                   }}
                 >
                   <Image
@@ -519,8 +546,8 @@ function SpeakeasyInsideContent() {
               </div>
             )}
             
-            {/* Tilt instruction for pouring step */}
-            {lagerStep === "lager-pouring" && (
+            {/* Tilt instruction for pouring step (hide when complete) */}
+            {lagerStep === "lager-pouring" && !pourComplete && (
               <p className="mt-4 text-white text-sm text-center font-medium drop-shadow-lg">
                 {hasTiltSupport === true && !tiltPermissionRequested && typeof (DeviceOrientationEvent as unknown as { requestPermission?: unknown }).requestPermission === 'function'
                   ? "Tap to enable tilt"

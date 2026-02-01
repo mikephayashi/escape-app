@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import TypewriterText from "./TypewriterText";
 import ChoiceButtons from "./ChoiceButtons";
@@ -60,6 +60,159 @@ type DialogBoxProps = {
   };
   onDialogClick?: () => void;
 };
+
+function AudioInputSection({
+  audioInput,
+  triggerFlash,
+}: {
+  audioInput: NonNullable<DialogBoxProps["audioInput"]>;
+  flashColor: "green" | "red" | null;
+  triggerFlash: (color: "green" | "red") => void;
+}) {
+  const [manualInput, setManualInput] = useState("");
+  // Start with voice input, switch to manual if not supported or on error
+  const [showManualInput, setShowManualInput] = useState(!audioInput.isSupported);
+
+  // Auto-switch to manual input when voice is not supported (e.g., after error)
+  useEffect(() => {
+    if (!audioInput.isSupported) {
+      setShowManualInput(true);
+    }
+  }, [audioInput.isSupported]);
+
+  const handleManualSubmit = useCallback(() => {
+    const numbers = manualInput.trim();
+    if (!numbers) return;
+    
+    const result = audioInput.onSubmit(numbers);
+    if (result === true) {
+      triggerFlash("green");
+      setManualInput("");
+    } else {
+      triggerFlash("red");
+    }
+  }, [manualInput, audioInput, triggerFlash]);
+
+  const handleAudioSubmit = useCallback(() => {
+    const result = audioInput.onSubmit(audioInput.extractedNumbers);
+    if (result === true) {
+      triggerFlash("green");
+    } else {
+      triggerFlash("red");
+    }
+  }, [audioInput, triggerFlash]);
+
+  return (
+    <div
+      className={`pointer-events-auto mt-3 flex w-full flex-col items-center gap-3 rounded-xl bg-black/60 px-4 py-4 transition-opacity duration-500 ${
+        audioInput.isVisible ? "opacity-100" : "pointer-events-none opacity-0"
+      }`}
+      onClick={(event) => event.stopPropagation()}
+      onPointerDown={(event) => event.stopPropagation()}
+      aria-hidden={!audioInput.isVisible}
+    >
+      {audioInput.label ? (
+        <span className="text-sm font-medium text-white/80">
+          {audioInput.label}
+        </span>
+      ) : null}
+
+      {showManualInput ? (
+        /* Manual input mode - shown after voice fails or is unsupported */
+        <form
+          className="flex w-full flex-col items-center gap-2"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleManualSubmit();
+          }}
+        >
+          {/* Show error message explaining why we switched to manual */}
+          {audioInput.error ? (
+            <div className="mb-2 text-center text-sm text-yellow-300">
+              {audioInput.error}
+            </div>
+          ) : null}
+          <input
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            value={manualInput}
+            onChange={(e) => setManualInput(e.target.value)}
+            placeholder="Enter the code"
+            className="w-full rounded-lg border border-white/30 bg-white/90 px-4 py-2 text-center text-lg font-semibold text-[#3A3A3A] outline-none focus:border-white"
+          />
+          <button
+            type="submit"
+            disabled={!manualInput.trim()}
+            className="rounded-lg bg-white px-4 py-2 text-sm font-semibold text-[#3A3A3A] transition-colors hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Submit
+          </button>
+        </form>
+      ) : (
+        /* Voice input mode - try this first */
+        <>
+          {/* Microphone button */}
+          <button
+            type="button"
+            onClick={audioInput.isListening ? audioInput.onStopListening : audioInput.onStartListening}
+            className={`flex h-16 w-16 items-center justify-center rounded-full text-3xl transition-all ${
+              audioInput.isListening
+                ? "animate-pulse bg-red-500 text-white shadow-lg shadow-red-500/50"
+                : "bg-white text-[#3A3A3A] hover:bg-white/90"
+            }`}
+            aria-label={audioInput.isListening ? "Stop listening" : "Start listening"}
+          >
+            {audioInput.isListening ? "🎙️" : "🎤"}
+          </button>
+
+          {/* Status text */}
+          <div className="text-center text-sm text-white/80">
+            {audioInput.isListening ? (
+              <span className="flex items-center gap-2">
+                <span className="h-2 w-2 animate-pulse rounded-full bg-red-500" />
+                Listening... Speak the numbers
+              </span>
+            ) : (
+              "Tap the microphone and say the code"
+            )}
+          </div>
+
+          {/* Transcript display */}
+          {audioInput.transcript ? (
+            <div className="w-full rounded-lg bg-white/10 px-3 py-2 text-center">
+              <div className="text-xs text-white/60">Heard:</div>
+              <div className="text-sm text-white">{audioInput.transcript}</div>
+              {audioInput.extractedNumbers ? (
+                <div className="mt-1 text-lg font-bold text-green-300">
+                  → {audioInput.extractedNumbers}
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+
+          {/* Error display - this will show briefly before switching to manual */}
+          {audioInput.error ? (
+            <div className="text-center text-sm text-red-300">
+              {audioInput.error}
+            </div>
+          ) : null}
+
+          {/* Submit button - only show when we have extracted numbers */}
+          {audioInput.extractedNumbers && !audioInput.isListening ? (
+            <button
+              type="button"
+              onClick={handleAudioSubmit}
+              className="rounded-lg bg-white px-4 py-2 text-sm font-semibold text-[#3A3A3A] transition-colors hover:bg-white/90"
+            >
+              Submit: {audioInput.extractedNumbers}
+            </button>
+          ) : null}
+        </>
+      )}
+    </div>
+  );
+}
 
 export function DialogOverlay({
   isVisible,
@@ -138,16 +291,6 @@ export default function DialogBox({
     if (result === true) {
       triggerFlash("green");
     } else if (result === false) {
-      triggerFlash("red");
-    }
-  };
-
-  const handleAudioSubmit = () => {
-    if (!audioInput) return;
-    const result = audioInput.onSubmit(audioInput.extractedNumbers);
-    if (result === true) {
-      triggerFlash("green");
-    } else {
       triggerFlash("red");
     }
   };
@@ -299,85 +442,11 @@ export default function DialogBox({
               </form>
             ) : null}
             {audioInput ? (
-              <div
-                className={`pointer-events-auto mt-3 flex w-full flex-col items-center gap-3 rounded-xl bg-black/60 px-4 py-4 transition-opacity duration-500 ${
-                  audioInput.isVisible ? "opacity-100" : "pointer-events-none opacity-0"
-                }`}
-                onClick={(event) => event.stopPropagation()}
-                onPointerDown={(event) => event.stopPropagation()}
-                aria-hidden={!audioInput.isVisible}
-              >
-                {audioInput.label ? (
-                  <span className="text-sm font-medium text-white/80">
-                    {audioInput.label}
-                  </span>
-                ) : null}
-                {!audioInput.isSupported ? (
-                  <div className="text-center text-sm text-red-300">
-                    Speech recognition is not supported in this browser.
-                    Please use Chrome or Edge.
-                  </div>
-                ) : (
-                  <>
-                    {/* Microphone button */}
-                    <button
-                      type="button"
-                      onClick={audioInput.isListening ? audioInput.onStopListening : audioInput.onStartListening}
-                      className={`flex h-16 w-16 items-center justify-center rounded-full text-3xl transition-all ${
-                        audioInput.isListening
-                          ? "animate-pulse bg-red-500 text-white shadow-lg shadow-red-500/50"
-                          : "bg-white text-[#3A3A3A] hover:bg-white/90"
-                      }`}
-                      aria-label={audioInput.isListening ? "Stop listening" : "Start listening"}
-                    >
-                      {audioInput.isListening ? "🎙️" : "🎤"}
-                    </button>
-
-                    {/* Status text */}
-                    <div className="text-center text-sm text-white/80">
-                      {audioInput.isListening ? (
-                        <span className="flex items-center gap-2">
-                          <span className="h-2 w-2 animate-pulse rounded-full bg-red-500" />
-                          Listening... Speak the numbers
-                        </span>
-                      ) : (
-                        "Tap the microphone and say the code"
-                      )}
-                    </div>
-
-                    {/* Transcript display */}
-                    {audioInput.transcript ? (
-                      <div className="w-full rounded-lg bg-white/10 px-3 py-2 text-center">
-                        <div className="text-xs text-white/60">Heard:</div>
-                        <div className="text-sm text-white">{audioInput.transcript}</div>
-                        {audioInput.extractedNumbers ? (
-                          <div className="mt-1 text-lg font-bold text-green-300">
-                            → {audioInput.extractedNumbers}
-                          </div>
-                        ) : null}
-                      </div>
-                    ) : null}
-
-                    {/* Error display */}
-                    {audioInput.error ? (
-                      <div className="text-center text-sm text-red-300">
-                        {audioInput.error}
-                      </div>
-                    ) : null}
-
-                    {/* Submit button - only show when we have extracted numbers */}
-                    {audioInput.extractedNumbers && !audioInput.isListening ? (
-                      <button
-                        type="button"
-                        onClick={handleAudioSubmit}
-                        className="rounded-lg bg-white px-4 py-2 text-sm font-semibold text-[#3A3A3A] transition-colors hover:bg-white/90"
-                      >
-                        Submit: {audioInput.extractedNumbers}
-                      </button>
-                    ) : null}
-                  </>
-                )}
-              </div>
+              <AudioInputSection
+                audioInput={audioInput}
+                flashColor={flashColor}
+                triggerFlash={triggerFlash}
+              />
             ) : null}
           </div>
         </>
