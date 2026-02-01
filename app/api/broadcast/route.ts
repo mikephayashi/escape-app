@@ -1,32 +1,63 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Pusher from 'pusher';
 
-// Check if Pusher is configured
-const isPusherConfigured = !!(
-  process.env.PUSHER_APP_ID &&
-  process.env.NEXT_PUBLIC_PUSHER_KEY &&
-  process.env.PUSHER_SECRET &&
-  process.env.NEXT_PUBLIC_PUSHER_CLUSTER
-);
+// Lazy initialization - create Pusher instance only when needed
+let pusherInstance: Pusher | null = null;
 
-// Only initialize Pusher if configured
-const pusher = isPusherConfigured
-  ? new Pusher({
-      appId: process.env.PUSHER_APP_ID!,
-      key: process.env.NEXT_PUBLIC_PUSHER_KEY!,
-      secret: process.env.PUSHER_SECRET!,
-      cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
-      useTLS: true,
-    })
-  : null;
+// Track challenge state server-side
+let challengeActive = false;
+
+function getPusher(): Pusher | null {
+  // Check if already initialized
+  if (pusherInstance) {
+    return pusherInstance;
+  }
+
+  // Check if all required env vars exist
+  const appId = process.env.PUSHER_APP_ID;
+  const key = process.env.NEXT_PUBLIC_PUSHER_KEY;
+  const secret = process.env.PUSHER_SECRET;
+  const cluster = process.env.NEXT_PUBLIC_PUSHER_CLUSTER;
+
+  console.log('Pusher config check:', {
+    hasAppId: !!appId,
+    hasKey: !!key,
+    hasSecret: !!secret,
+    hasCluster: !!cluster,
+  });
+
+  if (!appId || !key || !secret || !cluster) {
+    console.error('Missing Pusher config:', { appId: !!appId, key: !!key, secret: !!secret, cluster: !!cluster });
+    return null;
+  }
+
+  // Initialize Pusher
+  pusherInstance = new Pusher({
+    appId,
+    key,
+    secret,
+    cluster,
+    useTLS: true,
+  });
+
+  return pusherInstance;
+}
 
 export async function POST(request: NextRequest) {
   try {
-    // Check if Pusher is configured
+    // Get or create Pusher instance
+    const pusher = getPusher();
+    
     if (!pusher) {
       return NextResponse.json(
         { 
-          error: 'Pusher not configured. Add PUSHER_APP_ID, PUSHER_SECRET, NEXT_PUBLIC_PUSHER_KEY, and NEXT_PUBLIC_PUSHER_CLUSTER to Vercel environment variables.' 
+          error: 'Pusher not configured. Check environment variables in Vercel.',
+          debug: {
+            PUSHER_APP_ID: !!process.env.PUSHER_APP_ID,
+            NEXT_PUBLIC_PUSHER_KEY: !!process.env.NEXT_PUBLIC_PUSHER_KEY,
+            PUSHER_SECRET: !!process.env.PUSHER_SECRET,
+            NEXT_PUBLIC_PUSHER_CLUSTER: !!process.env.NEXT_PUBLIC_PUSHER_CLUSTER,
+          }
         },
         { status: 500 }
       );
@@ -40,6 +71,13 @@ export async function POST(request: NextRequest) {
         { error: 'eventType is required' },
         { status: 400 }
       );
+    }
+
+    // Track challenge state
+    if (eventType === 'start-challenge') {
+      challengeActive = true;
+    } else if (eventType === 'stop-challenge') {
+      challengeActive = false;
     }
 
     // Broadcast to all connected clients on the "escape-room" channel
@@ -61,4 +99,9 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+// GET endpoint to check current challenge state
+export async function GET() {
+  return NextResponse.json({ challengeActive });
 }

@@ -1,18 +1,56 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { usePusher } from '@/app/hooks/usePusher';
+
+const CHALLENGE_STORAGE_KEY = 'escape-room-challenge-active';
 
 export default function ChallengeOverlay() {
   const [isBlocking, setIsBlocking] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
+  const pathname = usePathname();
   const { subscribe } = usePusher();
+
+  // Check challenge state on mount (localStorage + server)
+  useEffect(() => {
+    // First check localStorage for instant restore
+    const storedState = localStorage.getItem(CHALLENGE_STORAGE_KEY);
+    if (storedState === 'true') {
+      setIsBlocking(true);
+      setShowMessage(false);
+    }
+
+    // Also check server state (handles new users who joined after challenge started)
+    const checkServerState = async () => {
+      try {
+        const response = await fetch('/api/broadcast');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.challengeActive) {
+            setIsBlocking(true);
+            setShowMessage(false);
+            localStorage.setItem(CHALLENGE_STORAGE_KEY, 'true');
+          } else {
+            // Server says no challenge - clear local state if it was stale
+            localStorage.removeItem(CHALLENGE_STORAGE_KEY);
+            setIsBlocking(false);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to check challenge state:', error);
+      }
+    };
+
+    checkServerState();
+  }, []);
 
   useEffect(() => {
     // Listen for challenge start
     subscribe('start-challenge', () => {
       setIsBlocking(true);
       setShowMessage(true);
+      localStorage.setItem(CHALLENGE_STORAGE_KEY, 'true');
       
       // Hide the "Challenge started!" message after 3 seconds, but keep blocking
       setTimeout(() => {
@@ -24,10 +62,14 @@ export default function ChallengeOverlay() {
     subscribe('stop-challenge', () => {
       setIsBlocking(false);
       setShowMessage(false);
+      localStorage.removeItem(CHALLENGE_STORAGE_KEY);
     });
   }, [subscribe]);
 
-  if (!isBlocking) return null;
+  // Don't show overlay on admin pages
+  const isAdminPage = pathname?.startsWith('/admin');
+  
+  if (!isBlocking || isAdminPage) return null;
 
   return (
     <div 
