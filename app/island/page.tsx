@@ -7,6 +7,32 @@ import BillyDialog from "../components/BillyDialog";
 import DialogBox from "../components/DialogBox";
 import NextButton from "../components/NextButton";
 
+// Map names to user images
+const userImageMap: Record<string, string> = {
+  alex: "/assets/shared/users/Alex.png",
+  anastasia: "/assets/shared/users/Anastasia.png",
+  brian: "/assets/shared/users/Brian.png",
+  carina: "/assets/shared/users/Carina.png",
+  garrett: "/assets/shared/users/Garrett.png",
+  goodman: "/assets/shared/users/Goodman.png",
+};
+
+// Map names to gender
+const boyNames = ["alex", "brian", "garrett", "goodman"];
+const girlNames = ["carina", "anastasia"];
+
+function getUserImage(name: string): string | null {
+  const lowerName = name.toLowerCase().trim();
+  return userImageMap[lowerName] || null;
+}
+
+function getGenderFromName(name: string): "boy" | "girl" | null {
+  const lowerName = name.toLowerCase().trim();
+  if (boyNames.includes(lowerName)) return "boy";
+  if (girlNames.includes(lowerName)) return "girl";
+  return null;
+}
+
 export default function IslandPage() {
   const router = useRouter();
   // Wait for user interaction before starting typewriter to enable audio
@@ -15,7 +41,7 @@ export default function IslandPage() {
   const [isNameInputVisible, setIsNameInputVisible] = useState(false);
   const [name, setName] = useState("");
   const [gender, setGender] = useState<"boy" | "girl" | null>(null);
-  const [stage, setStage] = useState<"intro" | "gender" | "showPlayer" | "wakeup" | "trichael" | "choices">("intro");
+  const [stage, setStage] = useState<"intro" | "greeting" | "showPlayer" | "wakeup" | "trichael" | "choices">("intro");
   const [dialogText, setDialogText] = useState("Tap to continue");
   const [backgroundImage] = useState(
     "/assets/shared/backgrounds/island-background.png",
@@ -59,13 +85,23 @@ export default function IslandPage() {
     }
 
     setIsNameInputVisible(false);
-    setDialogText("Are you a boy or girl?");
-    setStage("gender");
+    setDialogText(`Hi ${name.trim()}!`);
+    setStage("greeting");
   };
 
-  const handleGenderSelect = (selectedGender: "boy" | "girl") => {
-    setGender(selectedGender);
+  const handleConfirmIdentity = () => {
+    const detectedGender = getGenderFromName(name);
+    if (detectedGender) {
+      setGender(detectedGender);
+    }
     setStage("showPlayer");
+  };
+
+  const handleNotMe = () => {
+    setName("");
+    setDialogText("Welcome to Maui, Hawaii . . . What is your name?");
+    setIsNameInputVisible(true);
+    setStage("intro");
   };
 
   const handlePlayerNextClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -94,7 +130,55 @@ export default function IslandPage() {
       onPointerDown={handleScreenTap}
     >
       <div className="mx-auto flex h-full w-full max-w-md flex-col items-center overflow-y-auto px-4 pt-16">
-        {stage === "showPlayer" && gender ? (
+        {stage === "greeting" && getUserImage(name) ? (
+          <>
+            <div className="absolute inset-0 flex items-center justify-center bg-black/60" style={{ paddingTop: "2vh" }}>
+              <div className="flex flex-col items-center gap-3">
+                <div className="overflow-hidden rounded-3xl border-4 border-amber-400 shadow-2xl">
+                  <Image
+                    src={getUserImage(name)!}
+                    alt={`${name}'s photo`}
+                    width={280}
+                    height={280}
+                    className="h-auto w-64 object-cover"
+                    priority
+                  />
+                </div>
+                <div 
+                  className="rounded-2xl bg-amber-50 px-8 py-3 text-center shadow-lg"
+                  style={{ fontFamily: "FinkHeavy, sans-serif" }}
+                >
+                  <p className="text-2xl text-amber-900">Hi {name.trim()}!</p>
+                  <p className="mt-1 text-base text-amber-700">Not you? Change name.</p>
+                </div>
+                <div className="mt-2 flex gap-4">
+                  <button
+                    onClick={handleNotMe}
+                    className="rounded-full bg-red-500 px-6 py-3 text-lg text-white shadow-lg transition-all hover:scale-105 hover:bg-red-400 active:scale-95"
+                    style={{ fontFamily: "FinkHeavy, sans-serif" }}
+                  >
+                    Not me
+                  </button>
+                  <button
+                    onClick={handleConfirmIdentity}
+                    className="rounded-full bg-green-600 px-6 py-3 text-lg text-white shadow-lg transition-all hover:scale-105 hover:bg-green-500 active:scale-95"
+                    style={{ fontFamily: "FinkHeavy, sans-serif" }}
+                  >
+                    It&apos;s me!
+                  </button>
+                </div>
+              </div>
+            </div>
+          </>
+        ) : stage === "greeting" ? (
+          <BillyDialog
+            text={dialogText}
+            characterImageVisible={isBillyVisible}
+            useTypewriter={useTypewriter}
+            className="mt-6 max-w-sm"
+            onDialogClick={handleScreenTap}
+          />
+        ) : stage === "showPlayer" && gender ? (
           <div className="absolute inset-0 flex items-center justify-center" style={{ paddingTop: "15vh" }}>
             <Image
               src={`/assets/shared/characters/${gender}.png`}
@@ -130,23 +214,13 @@ export default function IslandPage() {
             useTypewriter={useTypewriter}
             className="mt-6 max-w-sm"
             onDialogClick={handleScreenTap}
-            choiceButtons={
-              stage === "gender"
-                ? {
-                    isVisible: true,
-                    primaryLabel: "Boy",
-                    secondaryLabel: "Girl",
-                    onPrimaryClick: () => handleGenderSelect("boy"),
-                    onSecondaryClick: () => handleGenderSelect("girl"),
-                  }
-                : {
-                    isVisible: stage === "choices",
-                    primaryLabel: "House.",
-                    secondaryLabel: "Stay here.",
-                    onPrimaryClick: handleHouseClick,
-                    onSecondaryClick: handleStayHereClick,
-                  }
-            }
+            choiceButtons={{
+              isVisible: stage === "choices",
+              primaryLabel: "House.",
+              secondaryLabel: "Stay here.",
+              onPrimaryClick: handleHouseClick,
+              onSecondaryClick: handleStayHereClick,
+            }}
             inputBox={{
               isVisible: isNameInputVisible,
               value: name,
