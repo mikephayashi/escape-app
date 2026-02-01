@@ -22,10 +22,6 @@ export default function Home() {
     router.push("/island");
   };
 
-  const handleSkipVideo = () => {
-    router.push("/island");
-  };
-
   return (
     <main
       className="screen-container relative flex items-end justify-center bg-cover bg-center pb-6"
@@ -44,14 +40,6 @@ export default function Home() {
             playsInline
             autoPlay
           />
-          {/* Skip Button */}
-          <button
-            onClick={handleSkipVideo}
-            className="absolute bottom-8 right-8 rounded-full bg-white/20 px-6 py-2 text-white backdrop-blur-sm transition-all hover:bg-white/30"
-            style={{ fontFamily: "FinkHeavy, sans-serif" }}
-          >
-            Skip →
-          </button>
         </div>
       )}
 
