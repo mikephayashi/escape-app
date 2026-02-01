@@ -500,8 +500,8 @@ function SpeakeasyInsideContent() {
                 <div 
                   className="absolute inset-0 flex items-center justify-center z-20 transition-opacity duration-150"
                   style={{
-                    // Opacity goes from 1 to 0 as pourProgress goes from 0 to 100, or 0 when complete
-                    opacity: pourComplete ? 0 : Math.max(0, 1 - (pourProgress / 100))
+                    // Opacity matches remaining pour: 80% poured = 20% opacity
+                    opacity: Math.max(0, 1 - (pourProgress / 100))
                   }}
                 >
                   <Image
