@@ -45,12 +45,10 @@ function SpeakeasyInsideContent() {
   const [wordyHandled, setWordyHandled] = useState(false);
   // Lager drinking flow: "lager-dialog" → "lager-full" → "lager-pouring" → "lager-empty" → "brewster-final"
   const [lagerStep, setLagerStep] = useState<"lager-dialog" | "lager-full" | "lager-pouring" | "lager-empty" | "brewster-final" | null>(null);
-  const [isFadingBeer, setIsFadingBeer] = useState(false);
   // Tilt detection states
   const [tiltAngle, setTiltAngle] = useState(0);
   const [hasTiltSupport, setHasTiltSupport] = useState<boolean | null>(null);
   const [tiltPermissionRequested, setTiltPermissionRequested] = useState(false);
-  const [pourProgress, setPourProgress] = useState(0); // 0-100 progress of pouring
 
   const showDialogFn = ({
     key,
@@ -81,25 +79,17 @@ function SpeakeasyInsideContent() {
           },
     );
 
-  // Trigger the pouring animation when pour is complete
+  // Trigger when pour is complete (tilted enough)
   const triggerPourComplete = useCallback(() => {
     if (lagerStep !== "lager-pouring") return;
     
-    setIsFadingBeer(true);
-    // After 1 second (halfway through fade), swap the image
-    setTimeout(() => {
-      setZoomedItem({
-        src: "/assets/scenes/speakeasy/Empty%20Beer.png",
-        alt: "Empty Lager",
-        aspectRatio: "1024 / 1536",
-      });
-    }, 1000);
-    // After 2 seconds, complete the fade and move to next step
-    setTimeout(() => {
-      setIsFadingBeer(false);
-      setLagerStep("lager-empty");
-      setPourProgress(0);
-    }, 2000);
+    // Update zoomed item to empty beer and move to next step
+    setZoomedItem({
+      src: "/assets/scenes/speakeasy/Empty%20Beer.png",
+      alt: "Empty Lager",
+      aspectRatio: "1024 / 1536",
+    });
+    setLagerStep("lager-empty");
   }, [lagerStep]);
 
   // Handle wordy result or show intro dialog
@@ -153,9 +143,7 @@ function SpeakeasyInsideContent() {
     let fallbackTimeout: NodeJS.Timeout;
     
     const handleOrientation = (event: DeviceOrientationEvent) => {
-      // beta is the front-to-back tilt in degrees (-180 to 180)
       // gamma is the left-to-right tilt in degrees (-90 to 90)
-      const beta = event.beta;
       const gamma = event.gamma;
       
       // Check if we're getting real sensor data (not null/undefined)
@@ -169,15 +157,9 @@ function SpeakeasyInsideContent() {
       const effectiveTilt = Math.abs(gamma ?? 0);
       setTiltAngle(effectiveTilt);
       
-      // Start filling pour progress when tilted past 30 degrees
-      if (effectiveTilt > 30) {
-        setPourProgress(prev => {
-          const newProgress = Math.min(100, prev + 2); // Increase by 2% per frame
-          if (newProgress >= 100) {
-            triggerPourComplete();
-          }
-          return newProgress;
-        });
+      // Trigger completion when tilted past 60 degrees (opacity reaches 0)
+      if (effectiveTilt >= 60) {
+        triggerPourComplete();
       }
     };
 
@@ -224,14 +206,9 @@ function SpeakeasyInsideContent() {
             const effectiveTilt = Math.abs(gamma);
             setTiltAngle(effectiveTilt);
             
-            if (effectiveTilt > 30 && lagerStep === "lager-pouring") {
-              setPourProgress(prev => {
-                const newProgress = Math.min(100, prev + 2);
-                if (newProgress >= 100) {
-                  triggerPourComplete();
-                }
-                return newProgress;
-              });
+            // Trigger completion when tilted past 60 degrees
+            if (effectiveTilt >= 60) {
+              triggerPourComplete();
             }
           });
         } else {
@@ -388,60 +365,81 @@ function SpeakeasyInsideContent() {
       {zoomedItem ? (
         <div className="pointer-events-none absolute left-1/2 top-1/2 w-[90%] max-w-sm -translate-x-1/2 -translate-y-1/2 z-20">
           <div className="flex flex-col items-center justify-center">
-            <div 
-              className="relative flex items-center justify-center transition-transform duration-100"
-              style={{
-                transform: lagerStep === "lager-pouring" 
-                  ? `rotate(${Math.min(tiltAngle * 2, 90)}deg)` 
-                  : "rotate(0deg)"
-              }}
-            >
-              <Image
-                src={zoomedItem.src}
-                alt={zoomedItem.alt}
-                width={
-                  zoomedItem.alt === "Napkin" ? 352 :
-                  (lagerStep === "lager-dialog" || lagerStep === "lager-empty" || lagerStep === "lager-full" || lagerStep === "lager-pouring") ? 168 : 176
-                }
-                height={
-                  zoomedItem.alt === "Napkin" ? 352 :
-                  (lagerStep === "lager-dialog" || lagerStep === "lager-empty" || lagerStep === "lager-full" || lagerStep === "lager-pouring") ? 252 : 176
-                }
-                className={`h-auto w-auto object-contain transition-opacity duration-[2000ms] ${
-                  isFadingBeer ? "opacity-0" : "opacity-100"
-                } ${
-                  zoomedItem.alt === "Napkin" ? "max-h-[352px] max-w-[352px]" :
-                  (lagerStep === "lager-dialog" || lagerStep === "lager-empty" || lagerStep === "lager-full" || lagerStep === "lager-pouring") ? "max-h-[252px] max-w-[168px]" :
-                  "max-h-44 max-w-44"
-                }`}
-                priority
-              />
-              {/* Password on empty beer - fades in with the beer */}
-              {(lagerStep === "lager-empty" || (lagerStep === "lager-pouring" && isFadingBeer)) && (
-                <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-[2000ms] ${
-                  isFadingBeer ? "opacity-0" : "opacity-100"
-                }`}>
+            {/* Pouring mode - stacked layers with opacity control */}
+            {lagerStep === "lager-pouring" ? (
+              <div 
+                className="relative flex items-center justify-center transition-transform duration-100"
+                style={{
+                  transform: `rotate(${Math.min(tiltAngle * 2, 90)}deg)`
+                }}
+              >
+                {/* Bottom layer: Empty beer */}
+                <Image
+                  src="/assets/scenes/speakeasy/Empty%20Beer.png"
+                  alt="Empty Lager"
+                  width={168}
+                  height={252}
+                  className="h-auto w-auto object-contain max-h-[252px] max-w-[168px]"
+                  priority
+                />
+                {/* Middle layer: Password number */}
+                <div className="absolute inset-0 flex items-center justify-center">
                   <span className="text-4xl font-bold text-[#E3DFD9]">3451</span>
                 </div>
-              )}
-            </div>
-            
-            {/* Pour progress indicator */}
-            {lagerStep === "lager-pouring" && !isFadingBeer && (
-              <div className="mt-4 w-48 flex flex-col items-center gap-2">
-                <div className="w-full h-3 bg-white/20 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-amber-500 transition-all duration-100 rounded-full"
-                    style={{ width: `${pourProgress}%` }}
-                  />
-                </div>
-                <p className="text-white text-sm text-center font-medium drop-shadow-lg">
-                  {hasTiltSupport === true && !tiltPermissionRequested && typeof (DeviceOrientationEvent as unknown as { requestPermission?: unknown }).requestPermission === 'function'
-                    ? "Tap to enable tilt"
-                    : "Tilt your device to pour! 🍺"
-                  }
-                </p>
+                {/* Top layer: Full beer - opacity decreases as you tilt */}
+                <Image
+                  src="/assets/scenes/speakeasy/Beer.png"
+                  alt="Lager"
+                  width={168}
+                  height={252}
+                  className="absolute inset-0 h-auto w-auto object-contain max-h-[252px] max-w-[168px] transition-opacity duration-150"
+                  style={{
+                    // Opacity goes from 1 to 0 as tiltAngle goes from 0 to 60
+                    opacity: Math.max(0, 1 - (tiltAngle / 60))
+                  }}
+                  priority
+                />
               </div>
+            ) : (
+              /* Normal zoomed item display for other states */
+              <div 
+                className="relative flex items-center justify-center"
+              >
+                <Image
+                  src={zoomedItem.src}
+                  alt={zoomedItem.alt}
+                  width={
+                    zoomedItem.alt === "Napkin" ? 352 :
+                    (lagerStep === "lager-dialog" || lagerStep === "lager-empty" || lagerStep === "lager-full") ? 168 : 176
+                  }
+                  height={
+                    zoomedItem.alt === "Napkin" ? 352 :
+                    (lagerStep === "lager-dialog" || lagerStep === "lager-empty" || lagerStep === "lager-full") ? 252 : 176
+                  }
+                  className={`h-auto w-auto object-contain ${
+                    zoomedItem.alt === "Napkin" ? "max-h-[352px] max-w-[352px]" :
+                    (lagerStep === "lager-dialog" || lagerStep === "lager-empty" || lagerStep === "lager-full") ? "max-h-[252px] max-w-[168px]" :
+                    "max-h-44 max-w-44"
+                  }`}
+                  priority
+                />
+                {/* Password on empty beer */}
+                {lagerStep === "lager-empty" && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-4xl font-bold text-[#E3DFD9]">3451</span>
+                  </div>
+                )}
+              </div>
+            )}
+            
+            {/* Tilt instruction for pouring step */}
+            {lagerStep === "lager-pouring" && (
+              <p className="mt-4 text-white text-sm text-center font-medium drop-shadow-lg">
+                {hasTiltSupport === true && !tiltPermissionRequested && typeof (DeviceOrientationEvent as unknown as { requestPermission?: unknown }).requestPermission === 'function'
+                  ? "Tap to enable tilt"
+                  : "Tilt to pour! 🍺"
+                }
+              </p>
             )}
 
             {/* Tilt instruction for lager-full step */}

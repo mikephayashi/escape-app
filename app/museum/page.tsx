@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import DialogBox from "../components/DialogBox";
 import BillyDialog from "../components/BillyDialog";
@@ -8,35 +8,40 @@ import PositionedItem from "../components/PositionedItem";
 import NextButton from "../components/NextButton";
 
 export default function MuseumPage() {
+  // Wait for user interaction before starting typewriter to enable audio
+  const [isReady, setIsReady] = useState(false);
   const [zoomedItem, setZoomedItem] = useState<{
     src: string;
     alt: string;
     aspectRatio: string;
   } | null>(null);
   const [dialog, setDialog] = useState({
-    text: "",
-    isVisible: false,
-    showBilly: false,
+    text: "Tap to continue",
+    isVisible: true,
+    showBilly: true,
     showBackground: true,
     useTypewriter: false,
-    speaker: "",
-    key: "",
+    speaker: "Billy",
+    key: "tap-to-start",
   });
   const [lockInput, setLockInput] = useState("");
   const [lockSolved, setLockSolved] = useState(false);
 
-  // Show Billy's introduction dialog on page load
-  useEffect(() => {
-    setDialog({
-      text: "Explore the exhibit. Maybe you'll find some clues . . .",
-      isVisible: true,
-      showBilly: true,
-      showBackground: true,
-      useTypewriter: true,
-      speaker: "Billy",
-      key: "intro",
-    });
-  }, []);
+  // Handle initial tap to start the typewriter dialog with audio
+  const handleStartDialog = () => {
+    if (!isReady && dialog.key === "tap-to-start") {
+      setIsReady(true);
+      setDialog({
+        text: "Explore the exhibit. Maybe you'll find some clues . . .",
+        isVisible: true,
+        showBilly: true,
+        showBackground: true,
+        useTypewriter: true,
+        speaker: "Billy",
+        key: "intro",
+      });
+    }
+  };
 
   const showDialog = ({
     key,
@@ -340,7 +345,11 @@ export default function MuseumPage() {
             showBackground={dialog.showBackground}
             useTypewriter={dialog.useTypewriter}
             className="mt-6 max-w-sm"
-            onDialogClick={() => setDialog((current) => ({ ...current, isVisible: false }))}
+            onDialogClick={
+              dialog.key === "tap-to-start"
+                ? handleStartDialog
+                : () => setDialog((current) => ({ ...current, isVisible: false }))
+            }
           />
         </div>
       ) : null}

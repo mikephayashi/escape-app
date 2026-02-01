@@ -8,14 +8,16 @@ import NextButton from "../components/NextButton";
 import PositionedItem from "../components/PositionedItem";
 
 export default function LivingRoomPage() {
+  // Wait for user interaction before starting typewriter to enable audio
+  const [isReady, setIsReady] = useState(false);
   const [dialog, setDialog] = useState({
-    text: "Find where someone might be hiding clues.",
+    text: "Tap to continue",
     isVisible: true,
     showBilly: true,
     showBackground: true,
-    useTypewriter: true,
+    useTypewriter: false,
     speaker: "Billy",
-    key: "intro",
+    key: "tap-to-start",
   });
   const [zoomedItem, setZoomedItem] = useState<{
     src: string;
@@ -61,6 +63,22 @@ export default function LivingRoomPage() {
       setLivingRoomHintVisible(false);
     }
   }, [zoomedItem]);
+
+  // Handle initial tap to start the typewriter dialog with audio
+  const handleStartDialog = () => {
+    if (!isReady && dialog.key === "tap-to-start") {
+      setIsReady(true);
+      setDialog({
+        text: "Find where someone might be hiding clues.",
+        isVisible: true,
+        showBilly: true,
+        showBackground: true,
+        useTypewriter: true,
+        speaker: "Billy",
+        key: "intro",
+      });
+    }
+  };
 
   return (
     <main className="screen-container game-wrapper">
@@ -453,7 +471,11 @@ export default function LivingRoomPage() {
             showBackground={dialog.showBackground}
             useTypewriter={dialog.useTypewriter}
             className="mt-6 max-w-sm"
-            onDialogClick={() => setDialog((current) => ({ ...current, isVisible: false }))}
+            onDialogClick={
+              dialog.key === "tap-to-start"
+                ? handleStartDialog
+                : () => setDialog((current) => ({ ...current, isVisible: false }))
+            }
           />
         </div>
       ) : null}

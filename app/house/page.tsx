@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import BillyDialog from "../components/BillyDialog";
 
@@ -8,20 +8,22 @@ export default function HousePage() {
   const router = useRouter();
   const [backgroundImage, setBackgroundImage] =
     useState("/assets/scenes/house/House.png");
-  const [isBillyVisible, setIsBillyVisible] = useState(false);
-  const [dialogText, setDialogText] = useState("");
+  // Wait for user interaction before starting typewriter to enable audio
+  const [isReady, setIsReady] = useState(false);
+  const [isBillyVisible, setIsBillyVisible] = useState(true);
+  const [dialogText, setDialogText] = useState("Tap to continue");
+  const [useTypewriter, setUseTypewriter] = useState(false);
   const [stage, setStage] = useState<"house" | "houseOpen">("house");
 
-  useEffect(() => {
-    if (stage !== "house") {
+  const handleScreenTap = () => {
+    // Handle initial tap to start the typewriter dialog with audio
+    if (!isReady && stage === "house") {
+      setIsReady(true);
+      setDialogText("Explore the house");
+      setUseTypewriter(true);
       return;
     }
 
-    setIsBillyVisible(true);
-    setDialogText("Explore the house");
-  }, [stage]);
-
-  const handleScreenTap = () => {
     if (stage === "houseOpen") {
       router.push("/living-room");
       return;
@@ -43,6 +45,7 @@ export default function HousePage() {
         <BillyDialog
           text={dialogText}
           characterImageVisible={isBillyVisible}
+          useTypewriter={useTypewriter}
           className="mt-6 max-w-sm"
         />
       </div>

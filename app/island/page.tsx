@@ -9,19 +9,28 @@ import NextButton from "../components/NextButton";
 
 export default function IslandPage() {
   const router = useRouter();
+  // Wait for user interaction before starting typewriter to enable audio
+  const [isReady, setIsReady] = useState(false);
+  const [useTypewriter, setUseTypewriter] = useState(false);
   const [isNameInputVisible, setIsNameInputVisible] = useState(false);
   const [name, setName] = useState("");
   const [gender, setGender] = useState<"boy" | "girl" | null>(null);
   const [stage, setStage] = useState<"intro" | "gender" | "showPlayer" | "wakeup" | "trichael" | "choices">("intro");
-  const [dialogText, setDialogText] = useState(
-    "Welcome to Maui, Hawaii . . . What is your name?",
-  );
+  const [dialogText, setDialogText] = useState("Tap to continue");
   const [backgroundImage] = useState(
     "/assets/shared/backgrounds/island-background.png",
   );
   const [isBillyVisible] = useState(true);
 
   const handleScreenTap = () => {
+    // Handle initial tap to start the typewriter dialog with audio
+    if (!isReady && stage === "intro") {
+      setIsReady(true);
+      setDialogText("Welcome to Maui, Hawaii . . . What is your name?");
+      setUseTypewriter(true);
+      return;
+    }
+
     if (stage === "wakeup") {
       setStage("trichael");
       setDialogText("Oh no! You landed on the wrong island. You have to get to Maui, so you can make it to Trichael's wedding.");
@@ -101,6 +110,7 @@ export default function IslandPage() {
           <DialogBox
             text={dialogText}
             speaker="Trichael"
+            useTypewriter={useTypewriter}
             className="mt-6 max-w-sm"
             onDialogClick={handleScreenTap}
             characterImage={{
@@ -117,6 +127,7 @@ export default function IslandPage() {
           <BillyDialog
             text={dialogText}
             characterImageVisible={isBillyVisible}
+            useTypewriter={useTypewriter}
             className="mt-6 max-w-sm"
             onDialogClick={handleScreenTap}
             choiceButtons={

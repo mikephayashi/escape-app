@@ -5,6 +5,7 @@ import Image from "next/image";
 import DialogBox from "../components/DialogBox";
 
 type Stage =
+  | "tap-to-start"
   | "gulliver-ticket-dialog"
   | "gulliver-ticket-show"
   | "gulliver-invitation-dialog"
@@ -14,10 +15,11 @@ type Stage =
   | "trichael";
 
 export default function EndingPage() {
-  const [stage, setStage] = useState<Stage>("gulliver-ticket-dialog");
+  const [stage, setStage] = useState<Stage>("tap-to-start");
 
   const getBackgroundImage = () => {
     switch (stage) {
+      case "tap-to-start":
       case "gulliver-ticket-dialog":
       case "gulliver-ticket-show":
       case "gulliver-invitation-dialog":
@@ -34,6 +36,8 @@ export default function EndingPage() {
 
   const getDialogText = () => {
     switch (stage) {
+      case "tap-to-start":
+        return "Tap to continue";
       case "gulliver-ticket-dialog":
         return "Here's something that I found on the island . . . Maybe you can use it.";
       case "gulliver-invitation-dialog":
@@ -49,6 +53,7 @@ export default function EndingPage() {
 
   const getSpeaker = () => {
     switch (stage) {
+      case "tap-to-start":
       case "gulliver-ticket-dialog":
       case "gulliver-invitation-dialog":
         return "Gulliver";
@@ -63,6 +68,9 @@ export default function EndingPage() {
 
   const handleDialogDismiss = () => {
     switch (stage) {
+      case "tap-to-start":
+        setStage("gulliver-ticket-dialog");
+        break;
       case "gulliver-ticket-dialog":
         setStage("gulliver-ticket-show");
         break;
@@ -88,7 +96,8 @@ export default function EndingPage() {
   };
 
   const showItemImage = stage === "gulliver-ticket-show" || stage === "gulliver-invitation-show";
-  const showDialog = stage === "gulliver-ticket-dialog" || stage === "gulliver-invitation-dialog" || stage === "orville" || stage === "trichael";
+  const showDialog = stage === "tap-to-start" || stage === "gulliver-ticket-dialog" || stage === "gulliver-invitation-dialog" || stage === "orville" || stage === "trichael";
+  const useTypewriter = stage !== "tap-to-start";
 
   const getItemImage = () => {
     if (stage === "gulliver-ticket-show") {
@@ -132,6 +141,7 @@ export default function EndingPage() {
           <DialogBox
             text={getDialogText()}
             speaker={getSpeaker()}
+            useTypewriter={useTypewriter}
             className="mt-6 max-w-sm"
             onDialogClick={handleDialogDismiss}
             characterImage={
