@@ -51,6 +51,9 @@ function SpeakeasyInsideContent() {
   const [tiltPermissionRequested, setTiltPermissionRequested] = useState(false);
   // Smoothing ref for tilt
   const smoothedTiltRef = useRef(0);
+  // Pour progress: 0-100%, opacity = 1 - (pourProgress/100)
+  const [pourProgress, setPourProgress] = useState(0);
+  const lastTickRef = useRef<number | null>(null);
 
   const showDialogFn = ({
     key,
@@ -81,17 +84,16 @@ function SpeakeasyInsideContent() {
           },
     );
 
-  // Trigger when pour is complete (tilted enough)
+  // Trigger when pour is complete (held at 70+ degrees for 10 seconds)
   const triggerPourComplete = useCallback(() => {
     if (lagerStep !== "lager-pouring") return;
     
-    // Update zoomed item to empty beer and move to next step
-    setZoomedItem({
-      src: "/assets/scenes/speakeasy/Empty%20Beer.png",
-      alt: "Empty Lager",
-      aspectRatio: "1024 / 1536",
-    });
-    setLagerStep("lager-empty");
+    // Pour complete - dismiss zoomed item and show next button
+    setZoomedItem(null);
+    setLagerStep(null);
+    setPourProgress(0);
+    lastTickRef.current = null;
+    setShowNextButton(true);
   }, [lagerStep]);
 
   // Handle wordy result or show intro dialog
@@ -146,6 +148,8 @@ function SpeakeasyInsideContent() {
     
     const handleOrientation = (event: DeviceOrientationEvent) => {
       // gamma is the left-to-right tilt in degrees (-90 to 90)
+      // Negative gamma = tilting left (counter-clockwise)
+      // Positive gamma = tilting right (clockwise) - we ignore this
       const gamma = event.gamma;
       
       // Check if we're getting real sensor data (not null/undefined)
@@ -154,9 +158,9 @@ function SpeakeasyInsideContent() {
         setHasTiltSupport(true);
       }
       
-      // Calculate effective tilt - we want to detect when phone is tilted forward/sideways
-      // like pouring a drink. Use gamma (side tilt) as primary pour indicator
-      const rawTilt = Math.abs(gamma ?? 0);
+      // Only respond to counter-clockwise tilt (negative gamma / left tilt)
+      // Ignore clockwise tilt (positive gamma)
+      const rawTilt = gamma !== null && gamma < 0 ? Math.abs(gamma) : 0;
       
       // Smooth the tilt using exponential moving average (lower = smoother, higher = responsive)
       const smoothingFactor = 0.15;
@@ -165,9 +169,26 @@ function SpeakeasyInsideContent() {
       
       setTiltAngle(smoothedTilt);
       
-      // Trigger completion when tilted past 45 degrees (opacity reaches 0)
-      if (smoothedTilt >= 45) {
-        triggerPourComplete();
+      const now = Date.now();
+      
+      // Only progress opacity when tilted past 70 degrees
+      if (smoothedTilt >= 70) {
+        if (lastTickRef.current !== null) {
+          const deltaMs = now - lastTickRef.current;
+          // 10 seconds = 10000ms to go from 0 to 100%
+          const progressIncrement = (deltaMs / 10000) * 100;
+          setPourProgress(prev => {
+            const newProgress = Math.min(100, prev + progressIncrement);
+            if (newProgress >= 100) {
+              triggerPourComplete();
+            }
+            return newProgress;
+          });
+        }
+        lastTickRef.current = now;
+      } else {
+        // Below 70 degrees - pause the timer
+        lastTickRef.current = null;
       }
     };
 
@@ -210,8 +231,9 @@ function SpeakeasyInsideContent() {
         const permission = await DeviceOrientationEventTyped.requestPermission();
         if (permission === 'granted') {
           window.addEventListener('deviceorientation', (event: DeviceOrientationEvent) => {
-            const gamma = event.gamma ?? 0;
-            const rawTilt = Math.abs(gamma);
+            const gamma = event.gamma;
+            // Only respond to counter-clockwise tilt (negative gamma / left tilt)
+            const rawTilt = gamma !== null && gamma < 0 ? Math.abs(gamma) : 0;
             
             // Smooth the tilt using exponential moving average
             const smoothingFactor = 0.15;
@@ -220,9 +242,24 @@ function SpeakeasyInsideContent() {
             
             setTiltAngle(smoothedTilt);
             
-            // Trigger completion when tilted past 45 degrees
-            if (smoothedTilt >= 45) {
-              triggerPourComplete();
+            const now = Date.now();
+            
+            // Only progress opacity when tilted past 70 degrees
+            if (smoothedTilt >= 70) {
+              if (lastTickRef.current !== null) {
+                const deltaMs = now - lastTickRef.current;
+                const progressIncrement = (deltaMs / 10000) * 100;
+                setPourProgress(prev => {
+                  const newProgress = Math.min(100, prev + progressIncrement);
+                  if (newProgress >= 100) {
+                    triggerPourComplete();
+                  }
+                  return newProgress;
+                });
+              }
+              lastTickRef.current = now;
+            } else {
+              lastTickRef.current = null;
             }
           });
         } else {
@@ -386,7 +423,7 @@ function SpeakeasyInsideContent() {
                 style={{
                   width: 200,
                   height: 300,
-                  transform: `rotate(${Math.min(tiltAngle * 2, 90)}deg)`
+                  transform: `rotate(-${Math.min(tiltAngle, 90)}deg)`
                 }}
               >
                 {/* Bottom layer: Empty beer (15% smaller, shifted right and down) */}
@@ -404,12 +441,12 @@ function SpeakeasyInsideContent() {
                 <div className="absolute inset-0 flex items-center justify-center z-10 translate-y-4">
                   <span className="text-4xl font-bold text-[#E3DFD9] drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">3451</span>
                 </div>
-                {/* Top layer: Full beer - opacity decreases as you tilt */}
+                {/* Top layer: Full beer - opacity decreases based on pour progress (time held at >70 degrees) */}
                 <div 
                   className="absolute inset-0 flex items-center justify-center z-20 transition-opacity duration-150"
                   style={{
-                    // Opacity goes from 1 to 0 as tiltAngle goes from 0 to 45
-                    opacity: Math.max(0, 1 - (tiltAngle / 45))
+                    // Opacity goes from 1 to 0 as pourProgress goes from 0 to 100
+                    opacity: Math.max(0, 1 - (pourProgress / 100))
                   }}
                 >
                   <Image
