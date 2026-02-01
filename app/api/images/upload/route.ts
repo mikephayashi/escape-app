@@ -32,10 +32,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate unique filename
+    // Get optional username for organizing photos
+    const userName = formData.get('userName') as string || '';
+    
+    // Generate unique filename with optional username prefix
     const timestamp = Date.now();
     const extension = file.name.split('.').pop();
-    const filename = `${folder}/${timestamp}-${file.name}`;
+    // Include username in path for attribution: folder/username/timestamp-filename
+    const userPrefix = userName ? `${userName.toLowerCase().trim()}/` : '';
+    const filename = `${folder}/${userPrefix}${timestamp}-${file.name}`;
 
     // Upload to Vercel Blob
     const blob = await put(filename, file, {

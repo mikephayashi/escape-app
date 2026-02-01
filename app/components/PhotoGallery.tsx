@@ -8,6 +8,8 @@ interface Photo {
   filename: string;
   size: number;
   uploadedAt: string;
+  userName: string | null;
+  userAvatar: string | null;
 }
 
 interface PhotoGalleryProps {
@@ -86,23 +88,41 @@ export default function PhotoGallery({ onClose }: PhotoGalleryProps) {
               {photos.map((photo) => (
                 <div
                   key={photo.url}
-                  className="group relative cursor-pointer overflow-hidden rounded-xl bg-amber-100 shadow-md transition-transform hover:scale-105"
+                  className="group cursor-pointer overflow-hidden rounded-xl bg-amber-100 shadow-md transition-transform hover:scale-105"
                   onClick={() => setSelectedPhoto(photo)}
                 >
-                  <div className="aspect-square">
+                  <div className="relative aspect-square">
                     <Image
                       src={photo.url}
-                      alt="User photo"
+                      alt={photo.userName ? `Photo by ${photo.userName}` : "User photo"}
                       fill
                       className="object-cover"
                       sizes="(max-width: 768px) 50vw, 200px"
                     />
                   </div>
-                  {/* Overlay with time */}
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2">
-                    <p className="text-xs text-white">
-                      {formatTime(photo.uploadedAt)}
-                    </p>
+                  {/* User info and time below the image */}
+                  <div className="flex items-center gap-2 bg-amber-200/80 px-2 py-1.5">
+                    {photo.userAvatar && (
+                      <div className="relative h-6 w-6 flex-shrink-0 overflow-hidden rounded-full border border-amber-400">
+                        <Image
+                          src={photo.userAvatar}
+                          alt={photo.userName || "User"}
+                          fill
+                          className="object-cover"
+                          sizes="24px"
+                        />
+                      </div>
+                    )}
+                    <div className="min-w-0 flex-1">
+                      {photo.userName && (
+                        <p className="truncate text-xs font-semibold text-amber-900">
+                          {photo.userName}
+                        </p>
+                      )}
+                      <p className="text-[10px] text-amber-700">
+                        {formatTime(photo.uploadedAt)}
+                      </p>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -136,11 +156,35 @@ export default function PhotoGallery({ onClose }: PhotoGalleryProps) {
             </button>
             <Image
               src={selectedPhoto.url}
-              alt="Full size photo"
+              alt={selectedPhoto.userName ? `Photo by ${selectedPhoto.userName}` : "Full size photo"}
               width={800}
               height={800}
-              className="max-h-[85vh] w-auto rounded-lg object-contain"
+              className="max-h-[75vh] w-auto rounded-t-lg object-contain"
             />
+            {/* User info bar below the image */}
+            <div className="flex items-center gap-3 rounded-b-lg bg-amber-50 px-4 py-3">
+              {selectedPhoto.userAvatar && (
+                <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-full border-2 border-amber-400">
+                  <Image
+                    src={selectedPhoto.userAvatar}
+                    alt={selectedPhoto.userName || "User"}
+                    fill
+                    className="object-cover"
+                    sizes="40px"
+                  />
+                </div>
+              )}
+              <div className="min-w-0 flex-1">
+                {selectedPhoto.userName && (
+                  <p className="text-base font-bold text-amber-900">
+                    {selectedPhoto.userName}
+                  </p>
+                )}
+                <p className="text-sm text-amber-700">
+                  {formatTime(selectedPhoto.uploadedAt)}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       )}
