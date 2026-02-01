@@ -3,7 +3,13 @@
 import { useState, useEffect } from "react";
 import DialogBox from "../components/DialogBox";
 import NextButton from "../components/NextButton";
+import SceneLoader from "../components/SceneLoader";
 import UserAvatar from "../components/UserAvatar";
+
+// All images used in this scene for preloading
+const SCENE_IMAGES = [
+  "/assets/scenes/gulliver/Gulliver.png",
+];
 
 type DialogStage = "waiting" | "guh" | "mike-scold" | "help-request" | "done";
 
@@ -57,6 +63,7 @@ export default function GulliverPage() {
   const showNextButton = stage === "done";
 
   return (
+    <SceneLoader images={SCENE_IMAGES}>
     <main
       className="screen-container relative bg-cover bg-center"
       style={{ backgroundImage: "url('/assets/scenes/gulliver/Gulliver.png')" }}
@@ -88,5 +95,6 @@ export default function GulliverPage() {
       </div>
       <NextButton href="/nooks-cranny" isVisible={showNextButton} />
     </main>
+    </SceneLoader>
   );
 }

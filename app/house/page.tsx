@@ -3,7 +3,15 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import BillyDialog from "../components/BillyDialog";
+import SceneLoader from "../components/SceneLoader";
 import UserAvatar from "../components/UserAvatar";
+
+// All images used in this scene for preloading
+const SCENE_IMAGES = [
+  "/assets/scenes/house/House.png",
+  "/assets/scenes/house/House%20Open.png",
+  "/assets/shared/characters/Billy.svg",
+];
 
 export default function HousePage() {
   const router = useRouter();
@@ -27,6 +35,7 @@ export default function HousePage() {
   };
 
   return (
+    <SceneLoader images={SCENE_IMAGES}>
     <main
       className="screen-container bg-cover bg-center"
       style={{ backgroundImage: `url('${backgroundImage}')` }}
@@ -42,5 +51,6 @@ export default function HousePage() {
         />
       </div>
     </main>
+    </SceneLoader>
   );
 }

@@ -4,7 +4,21 @@ import { useState } from "react";
 import Image from "next/image";
 import DialogBox from "../components/DialogBox";
 import NextButton from "../components/NextButton";
+import SceneLoader from "../components/SceneLoader";
 import UserAvatar from "../components/UserAvatar";
+
+// All images used in this scene for preloading
+const SCENE_IMAGES = [
+  "/assets/shared/backgrounds/island-background.png",
+  "/assets/scenes/Ending/Dock.png",
+  "/assets/scenes/Ending/Lobby.png",
+  "/assets/scenes/Ending/Plane.png",
+  "/assets/scenes/Ending/Grass.png",
+  "/assets/scenes/Ending/Ticket.png",
+  "/assets/scenes/Ending/Invitation.png",
+  "/assets/scenes/nooks-cranny/Apple.png",
+  "/assets/shared/characters/trichael-wedding.png",
+];
 
 type Stage =
   | "apple-eat"
@@ -114,6 +128,7 @@ export default function EndingPage() {
   };
 
   return (
+    <SceneLoader images={SCENE_IMAGES}>
     <main
       className="screen-container relative bg-cover bg-center"
       style={{ backgroundImage: `url('${getBackgroundImage()}')` }}
@@ -190,5 +205,6 @@ export default function EndingPage() {
         )}
       </div>
     </main>
+    </SceneLoader>
   );
 }

@@ -6,8 +6,25 @@ import PositionedItem from "../components/PositionedItem";
 import BillyDialog from "../components/BillyDialog";
 import DialogBox from "../components/DialogBox";
 import NextButton from "../components/NextButton";
+import SceneLoader from "../components/SceneLoader";
 import UserAvatar from "../components/UserAvatar";
 import { useSpeechRecognition } from "../hooks/useSpeechRecognition";
+
+// All images used in this scene for preloading
+const SCENE_IMAGES = [
+  "/assets/scenes/office/Office%20empty.png",
+  "/assets/scenes/office/Computer.png",
+  "/assets/scenes/office/Microphone.png",
+  "/assets/scenes/office/Drink.png",
+  "/assets/scenes/office/Isabelle.png",
+  "/assets/scenes/office/Needs%20password.png",
+  "/assets/scenes/office/1st%20chart.svg",
+  "/assets/scenes/office/2nd%20chart.svg",
+  "/assets/scenes/office/3rd%20chart.svg",
+  "/assets/scenes/office/4th%20chart.svg",
+  "/assets/scenes/office/Office%20Hint.svg",
+  "/assets/scenes/living-room/Light%20Bulb.png",
+];
 
 export default function OfficePage() {
   const [dialog, setDialog] = useState({
@@ -85,6 +102,7 @@ export default function OfficePage() {
   };
 
   return (
+    <SceneLoader images={SCENE_IMAGES}>
     <main className="screen-container game-wrapper">
       <UserAvatar />
       <div
@@ -445,5 +463,6 @@ export default function OfficePage() {
       ) : null}
       </div>
     </main>
+    </SceneLoader>
   );
 }

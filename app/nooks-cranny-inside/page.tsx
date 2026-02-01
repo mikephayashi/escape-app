@@ -6,7 +6,19 @@ import DialogBox from "../components/DialogBox";
 import ChoiceButtons from "../components/ChoiceButtons";
 import PositionedItem from "../components/PositionedItem";
 import NextButton from "../components/NextButton";
+import SceneLoader from "../components/SceneLoader";
 import UserAvatar from "../components/UserAvatar";
+
+// All images used in this scene for preloading
+const SCENE_IMAGES = [
+  "/assets/scenes/nooks-cranny/Interior.png",
+  "/assets/scenes/nooks-cranny/Weights.png",
+  "/assets/scenes/nooks-cranny/Bear.png",
+  "/assets/scenes/nooks-cranny/Computer.png",
+  "/assets/scenes/nooks-cranny/TomNook.png",
+  "/assets/scenes/nooks-cranny/PC-Zoomed-In.svg",
+  "/assets/scenes/nooks-cranny/Apple.png",
+];
 
 type GamePhase = 
   | "exploring"
@@ -126,6 +138,7 @@ export default function NooksCrannyInsidePage() {
   const showPasswordInput = gamePhase === "tom-nook";
 
   return (
+    <SceneLoader images={SCENE_IMAGES}>
     <main className="screen-container game-wrapper">
       <UserAvatar />
       <div
@@ -300,5 +313,6 @@ export default function NooksCrannyInsidePage() {
         ) : null}
       </div>
     </main>
+    </SceneLoader>
   );
 }

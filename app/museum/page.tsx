@@ -6,7 +6,20 @@ import DialogBox from "../components/DialogBox";
 import BillyDialog from "../components/BillyDialog";
 import PositionedItem from "../components/PositionedItem";
 import NextButton from "../components/NextButton";
+import SceneLoader from "../components/SceneLoader";
 import UserAvatar from "../components/UserAvatar";
+
+// All images used in this scene for preloading
+const SCENE_IMAGES = [
+  "/assets/scenes/museum/Museum%20Empty.png",
+  "/assets/scenes/museum/Portrait1.png",
+  "/assets/scenes/museum/Portrait2.png",
+  "/assets/scenes/museum/Portrait3.png",
+  "/assets/scenes/museum/Portrait4.png",
+  "/assets/scenes/museum/Paper%20Trash.png",
+  "/assets/scenes/museum/Letter%20Lock.png",
+  "/assets/shared/characters/Billy.svg",
+];
 
 export default function MuseumPage() {
   const [zoomedItem, setZoomedItem] = useState<{
@@ -56,6 +69,7 @@ export default function MuseumPage() {
     );
 
   return (
+    <SceneLoader images={SCENE_IMAGES}>
     <main className="screen-container game-wrapper">
       <UserAvatar />
       <div
@@ -343,5 +357,6 @@ export default function MuseumPage() {
       ) : null}
       </div>
     </main>
+    </SceneLoader>
   );
 }

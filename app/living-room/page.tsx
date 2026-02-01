@@ -1,12 +1,29 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Image from "next/image";
 import DialogBox, { DialogOverlay } from "../components/DialogBox";
 import BillyDialog from "../components/BillyDialog";
 import NextButton from "../components/NextButton";
 import PositionedItem from "../components/PositionedItem";
+import SceneLoader from "../components/SceneLoader";
 import UserAvatar from "../components/UserAvatar";
+
+// All images used in this scene for preloading
+const SCENE_IMAGES = [
+  "/assets/scenes/living-room/Living%20Room%20Empty.png",
+  "/assets/scenes/living-room/Stanford%20Banner.png",
+  "/assets/scenes/living-room/Miffy.png",
+  "/assets/scenes/living-room/Checlist.png",
+  "/assets/scenes/living-room/Sticky%20Note.png",
+  "/assets/scenes/living-room/Computer.png",
+  "/assets/scenes/living-room/Books.png",
+  "/assets/scenes/living-room/Safe.svg",
+  "/assets/scenes/living-room/Fossil.png",
+  "/assets/scenes/living-room/Light%20Bulb.png",
+  "/assets/scenes/living-room/Living%20Room%20Hint.svg",
+  "/assets/shared/characters/Billy.svg",
+];
 
 export default function LivingRoomPage() {
   const [dialog, setDialog] = useState({
@@ -64,6 +81,7 @@ export default function LivingRoomPage() {
   }, [zoomedItem]);
 
   return (
+    <SceneLoader images={SCENE_IMAGES}>
     <main className="screen-container game-wrapper">
       <UserAvatar />
       <div
@@ -472,5 +490,6 @@ export default function LivingRoomPage() {
       ) : null}
       </div>
     </main>
+    </SceneLoader>
   );
 }

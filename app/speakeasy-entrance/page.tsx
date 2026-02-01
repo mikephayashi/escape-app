@@ -5,7 +5,15 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import BillyDialog from "../components/BillyDialog";
 import PositionedItem from "../components/PositionedItem";
+import SceneLoader from "../components/SceneLoader";
 import UserAvatar from "../components/UserAvatar";
+
+// All images used in this scene for preloading
+const SCENE_IMAGES = [
+  "/assets/scenes/speakeasy/speakeasy-entrance.png",
+  "/assets/scenes/museum/Arrow.png",
+  "/assets/shared/characters/Billy.svg",
+];
 
 const dialogLines = [
   "A hidden speakeasy! This must be where they're hiding something...",
@@ -45,6 +53,7 @@ export default function SpeakeasyEntrancePage() {
   };
 
   return (
+    <SceneLoader images={SCENE_IMAGES}>
     <main className="screen-container game-wrapper" onPointerDown={handleScreenTap}>
       <UserAvatar />
       <div
@@ -81,5 +90,6 @@ export default function SpeakeasyEntrancePage() {
       ) : null}
       </div>
     </main>
+    </SceneLoader>
   );
 }

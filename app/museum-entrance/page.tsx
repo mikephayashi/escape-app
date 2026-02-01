@@ -5,7 +5,17 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import DialogBox from "../components/DialogBox";
 import PositionedItem from "../components/PositionedItem";
+import SceneLoader from "../components/SceneLoader";
 import UserAvatar from "../components/UserAvatar";
+
+// All images used in this scene for preloading
+const SCENE_IMAGES = [
+  "/assets/scenes/museum/museum-outside.png",
+  "/assets/scenes/museum/museum-entrance.png",
+  "/assets/scenes/museum/Arrow.png",
+  "/assets/scenes/museum/Ticket.png",
+  "/assets/scenes/living-room/Fossil.png",
+];
 
 const dialogLines = [
   "Oh do you have something for me? Wow a fossil!",
@@ -68,6 +78,7 @@ export default function MuseumEntrancePage() {
   };
 
   return (
+    <SceneLoader images={SCENE_IMAGES}>
     <main className="screen-container game-wrapper" onPointerDown={handleScreenTap}>
       <UserAvatar />
       <div
@@ -113,5 +124,6 @@ export default function MuseumEntrancePage() {
       ) : null}
       </div>
     </main>
+    </SceneLoader>
   );
 }

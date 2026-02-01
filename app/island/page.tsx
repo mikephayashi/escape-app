@@ -6,8 +6,24 @@ import Image from "next/image";
 import BillyDialog from "../components/BillyDialog";
 import DialogBox from "../components/DialogBox";
 import NextButton from "../components/NextButton";
+import SceneLoader from "../components/SceneLoader";
 import UserAvatar from "../components/UserAvatar";
 import { useUser } from "../context/UserContext";
+
+// All images used in this scene for preloading
+const SCENE_IMAGES = [
+  "/assets/shared/backgrounds/island-background.png",
+  "/assets/shared/characters/Billy.svg",
+  "/assets/shared/characters/Trichael.png",
+  "/assets/shared/characters/boy.png",
+  "/assets/shared/characters/girl.png",
+  "/assets/shared/users/Alex.png",
+  "/assets/shared/users/Anastasia.png",
+  "/assets/shared/users/Brian.png",
+  "/assets/shared/users/Carina.png",
+  "/assets/shared/users/Garrett.png",
+  "/assets/shared/users/Goodman.png",
+];
 
 // Map names to user images
 const userImageMap: Record<string, string> = {
@@ -140,6 +156,7 @@ export default function IslandPage() {
   };
 
   return (
+    <SceneLoader images={SCENE_IMAGES}>
     <main
       className="screen-container bg-cover bg-center"
       style={{ backgroundImage: `url('${backgroundImage}')` }}
@@ -258,5 +275,6 @@ export default function IslandPage() {
         isVisible={stage === "showPlayer"}
       />
     </main>
+    </SceneLoader>
   );
 }
