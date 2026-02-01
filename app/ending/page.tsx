@@ -3,28 +3,32 @@
 import { useState } from "react";
 import Image from "next/image";
 import DialogBox from "../components/DialogBox";
+import NextButton from "../components/NextButton";
 
 type Stage =
-  | "tap-to-start"
+  | "apple-eat"
   | "gulliver-ticket-dialog"
   | "gulliver-ticket-show"
   | "gulliver-invitation-dialog"
   | "gulliver-invitation-show"
+  | "dock"
   | "orville"
   | "plane"
   | "trichael";
 
 export default function EndingPage() {
-  const [stage, setStage] = useState<Stage>("tap-to-start");
+  const [stage, setStage] = useState<Stage>("apple-eat");
 
   const getBackgroundImage = () => {
     switch (stage) {
-      case "tap-to-start":
+      case "apple-eat":
       case "gulliver-ticket-dialog":
       case "gulliver-ticket-show":
       case "gulliver-invitation-dialog":
       case "gulliver-invitation-show":
         return "/assets/shared/backgrounds/island-background.png";
+      case "dock":
+        return "/assets/scenes/Ending/Dock.png";
       case "orville":
         return "/assets/scenes/Ending/Lobby.png";
       case "plane":
@@ -36,8 +40,6 @@ export default function EndingPage() {
 
   const getDialogText = () => {
     switch (stage) {
-      case "tap-to-start":
-        return "Tap to continue";
       case "gulliver-ticket-dialog":
         return "Here's something that I found on the island . . . Maybe you can use it.";
       case "gulliver-invitation-dialog":
@@ -53,7 +55,6 @@ export default function EndingPage() {
 
   const getSpeaker = () => {
     switch (stage) {
-      case "tap-to-start":
       case "gulliver-ticket-dialog":
       case "gulliver-invitation-dialog":
         return "Gulliver";
@@ -68,7 +69,7 @@ export default function EndingPage() {
 
   const handleDialogDismiss = () => {
     switch (stage) {
-      case "tap-to-start":
+      case "apple-eat":
         setStage("gulliver-ticket-dialog");
         break;
       case "gulliver-ticket-dialog":
@@ -81,6 +82,9 @@ export default function EndingPage() {
         setStage("gulliver-invitation-show");
         break;
       case "gulliver-invitation-show":
+        setStage("dock");
+        break;
+      case "dock":
         setStage("orville");
         break;
       case "orville":
@@ -96,8 +100,7 @@ export default function EndingPage() {
   };
 
   const showItemImage = stage === "gulliver-ticket-show" || stage === "gulliver-invitation-show";
-  const showDialog = stage === "tap-to-start" || stage === "gulliver-ticket-dialog" || stage === "gulliver-invitation-dialog" || stage === "orville" || stage === "trichael";
-  const useTypewriter = stage !== "tap-to-start";
+  const showDialog = stage === "gulliver-ticket-dialog" || stage === "gulliver-invitation-dialog" || stage === "orville" || stage === "trichael";
 
   const getItemImage = () => {
     if (stage === "gulliver-ticket-show") {
@@ -113,14 +116,10 @@ export default function EndingPage() {
     <main
       className="screen-container relative bg-cover bg-center"
       style={{ backgroundImage: `url('${getBackgroundImage()}')` }}
-      onClick={stage === "plane" ? handleDialogDismiss : undefined}
     >
       <div className="mx-auto flex h-full w-full max-w-md flex-col items-center justify-center overflow-y-auto px-4">
         {showItemImage && (
-          <div
-            className="fixed inset-0 z-20 flex cursor-pointer items-center justify-center bg-black/60"
-            onClick={handleDialogDismiss}
-          >
+          <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/60">
             <div className="relative">
               <Image
                 src={getItemImage()}
@@ -130,10 +129,30 @@ export default function EndingPage() {
                 className="h-auto max-h-[70vh] w-auto max-w-[90vw] object-contain drop-shadow-2xl"
                 priority
               />
-              <p className="mt-4 text-center text-lg font-semibold text-white drop-shadow-lg">
-                Tap to continue
-              </p>
             </div>
+            <NextButton onClick={handleDialogDismiss} isVisible={true} />
+          </div>
+        )}
+
+        {stage === "apple-eat" && (
+          <div className="flex flex-col items-center">
+            <Image
+              src="/assets/scenes/nooks-cranny/Apple.png"
+              alt="Apple"
+              width={176}
+              height={176}
+              className="h-auto max-h-44 w-auto max-w-44 object-contain"
+              priority
+            />
+            <DialogBox
+              text="Hooray! An apple. Munch. Munch. Munch. Gulp. Ahhhhhh. Much BETTER!!!!!!"
+              speaker="Gulliver"
+              useTypewriter={true}
+              showBackground={true}
+              showOverlay={false}
+              className="mt-4 max-w-sm"
+              onDialogClick={handleDialogDismiss}
+            />
           </div>
         )}
 
@@ -141,7 +160,7 @@ export default function EndingPage() {
           <DialogBox
             text={getDialogText()}
             speaker={getSpeaker()}
-            useTypewriter={useTypewriter}
+            useTypewriter={true}
             className="mt-6 max-w-sm"
             onDialogClick={handleDialogDismiss}
             characterImage={
@@ -161,11 +180,11 @@ export default function EndingPage() {
         )}
 
         {stage === "plane" && (
-          <div className="fixed inset-0 z-10 flex cursor-pointer items-center justify-center">
-            <p className="text-2xl font-semibold text-white drop-shadow-lg animate-pulse">
-              Tap to continue...
-            </p>
-          </div>
+          <NextButton onClick={handleDialogDismiss} isVisible={true} />
+        )}
+
+        {stage === "dock" && (
+          <NextButton onClick={handleDialogDismiss} isVisible={true} />
         )}
       </div>
     </main>

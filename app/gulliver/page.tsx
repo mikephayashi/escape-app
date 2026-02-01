@@ -84,7 +84,7 @@ export default function GulliverPage() {
           }}
         />
       </div>
-      <NextButton href="/ending" isVisible={showNextButton} />
+      <NextButton href="/nooks-cranny" isVisible={showNextButton} />
     </main>
   );
 }
