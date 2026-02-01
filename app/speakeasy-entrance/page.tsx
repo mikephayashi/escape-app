@@ -14,24 +14,13 @@ const dialogLines = [
 
 export default function SpeakeasyEntrancePage() {
   const router = useRouter();
-  // Wait for user interaction before starting typewriter to enable audio
-  const [isReady, setIsReady] = useState(false);
   const [dialogIndex, setDialogIndex] = useState(0);
-  const [dialogText, setDialogText] = useState("Tap to continue");
-  const [useTypewriter, setUseTypewriter] = useState(false);
+  const [dialogText, setDialogText] = useState(dialogLines[0]);
+  const [useTypewriter, setUseTypewriter] = useState(true);
   const [isPromptComplete, setIsPromptComplete] = useState(false);
   const [isDialogComplete, setIsDialogComplete] = useState(false);
 
   const handleScreenTap = () => {
-    // Handle initial tap to start the typewriter dialog with audio
-    if (!isReady) {
-      setIsReady(true);
-      setDialogText(dialogLines[0]);
-      setUseTypewriter(true);
-      setIsPromptComplete(false);
-      return;
-    }
-
     if (dialogText) {
       if (!isPromptComplete) {
         return;

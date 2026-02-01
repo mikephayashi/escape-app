@@ -9,22 +9,12 @@ export default function HousePage() {
   const router = useRouter();
   const [backgroundImage, setBackgroundImage] =
     useState("/assets/scenes/house/House.png");
-  // Wait for user interaction before starting typewriter to enable audio
-  const [isReady, setIsReady] = useState(false);
   const [isBillyVisible, setIsBillyVisible] = useState(true);
-  const [dialogText, setDialogText] = useState("Tap to continue");
-  const [useTypewriter, setUseTypewriter] = useState(false);
+  const [dialogText, setDialogText] = useState("Explore the house");
+  const [useTypewriter, setUseTypewriter] = useState(true);
   const [stage, setStage] = useState<"house" | "houseOpen">("house");
 
   const handleScreenTap = () => {
-    // Handle initial tap to start the typewriter dialog with audio
-    if (!isReady && stage === "house") {
-      setIsReady(true);
-      setDialogText("Explore the house");
-      setUseTypewriter(true);
-      return;
-    }
-
     if (stage === "houseOpen") {
       router.push("/living-room");
       return;
