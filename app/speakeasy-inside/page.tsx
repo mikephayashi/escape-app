@@ -7,6 +7,19 @@ import BillyDialog from "../components/BillyDialog";
 import DialogBox from "../components/DialogBox";
 import PositionedItem from "../components/PositionedItem";
 import NextButton from "../components/NextButton";
+import SceneLoader from "../components/SceneLoader";
+
+// All images used in this scene for preloading
+const SCENE_IMAGES = [
+  "/assets/scenes/speakeasy/Speakeasy%20Empty.png",
+  "/assets/scenes/speakeasy/Light.png",
+  "/assets/scenes/speakeasy/Chair.png",
+  "/assets/scenes/speakeasy/Beer.png",
+  "/assets/scenes/speakeasy/Napkin.png",
+  "/assets/scenes/speakeasy/Empty%20Beer.png",
+  "/assets/scenes/speakeasy/Sticky.png",
+  "/assets/shared/characters/Billy.svg",
+];
 
 function SpeakeasyInsideContent() {
   const router = useRouter();
@@ -192,6 +205,7 @@ function SpeakeasyInsideContent() {
   };
 
   return (
+    <SceneLoader images={SCENE_IMAGES}>
     <main className="screen-container game-wrapper">
       <div
         className="game-container bg-cover bg-center"
@@ -433,6 +447,7 @@ function SpeakeasyInsideContent() {
 
       </div>
     </main>
+    </SceneLoader>
   );
 }
 
