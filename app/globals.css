@@ -63,6 +63,16 @@
   overflow: hidden !important;
 }
 
+/* Container for pages with positioned items that need to match a background */
+/* Uses viewport height units to ensure consistent positioning */
+.game-screen {
+  position: relative !important;
+  width: 100% !important;
+  min-height: 100% !important;
+  min-height: 100dvh !important;
+  overflow: hidden !important;
+}
+
 /* Support for iOS Safari safe areas */
 @supports (padding: env(safe-area-inset-bottom)) {
   .screen-container {

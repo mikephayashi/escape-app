@@ -74,7 +74,7 @@ export default function LivingRoomPage() {
         />
       ) : null}
       <div className="pointer-events-none absolute inset-0 z-0">
-        <PositionedItem left="0%" top="0%" width="60%" aspectRatio="1536 / 1024">
+        <PositionedItem left="0%" top="-5%" width="60%" aspectRatio="1536 / 1024">
           <Image
             src="/assets/scenes/living-room/Stanford%20Banner.png"
             alt="Stanford banner"
@@ -84,7 +84,7 @@ export default function LivingRoomPage() {
             priority
           />
         </PositionedItem>
-        <PositionedItem left="25%" top="16%" width="20%" aspectRatio="1024 / 1536">
+        <PositionedItem left="25%" top="14%" width="20%" aspectRatio="1024 / 1536">
           <Image
             src="/assets/scenes/living-room/Miffy.png"
             alt="Miffy poster"
@@ -93,7 +93,7 @@ export default function LivingRoomPage() {
             className="object-contain"
           />
         </PositionedItem>
-        <PositionedItem left="75%" top="20%" width="30%" aspectRatio="1536 / 1024">
+        <PositionedItem left="75%" top="14%" width="30%" aspectRatio="1536 / 1024">
           <Image
             src="/assets/scenes/living-room/Checlist.png"
             alt="Checklist"
@@ -102,7 +102,7 @@ export default function LivingRoomPage() {
             className="object-contain"
           />
         </PositionedItem>
-        <PositionedItem left="63%" top="20%" width="18%" aspectRatio="1024 / 1536">
+        <PositionedItem left="64%" top="14%" width="18%" aspectRatio="1024 / 1536">
           <Image
             src="/assets/scenes/living-room/Sticky%20Note.png"
             alt="Sticky note"
@@ -111,7 +111,7 @@ export default function LivingRoomPage() {
             className="object-contain"
           />
         </PositionedItem>
-        <PositionedItem left="70%" top="31.5%" width="28%" aspectRatio="1024 / 1536">
+        <PositionedItem left="70%" top="27%" width="28%" aspectRatio="1024 / 1536">
           <Image
             src="/assets/scenes/living-room/Computer.png"
             alt="Computer"
@@ -120,12 +120,12 @@ export default function LivingRoomPage() {
             className="object-contain"
           />
         </PositionedItem>
-        <PositionedItem left="0%" top="50%" width="34%" aspectRatio="1536 / 1024">
+        <PositionedItem left="2%" top="52%" width="22%" aspectRatio="1536 / 1024">
           <Image
             src="/assets/scenes/living-room/Books.png"
             alt="Books"
             fill
-            sizes="34vw"
+            sizes="22vw"
             className="object-contain"
           />
         </PositionedItem>
@@ -272,9 +272,9 @@ export default function LivingRoomPage() {
           type="button"
           aria-label="Miffy poster"
           className="pointer-events-auto"
-          left="21%"
-          top="13%"
-          width="30%"
+          left="25%"
+          top="14%"
+          width="20%"
           aspectRatio="1024 / 1536"
           onClick={() => {
             setZoomedItem({
@@ -298,7 +298,7 @@ export default function LivingRoomPage() {
           aria-label="Computer"
           className="pointer-events-auto"
           left="70%"
-          top="31.5%"
+          top="27%"
           width="28%"
           aspectRatio="1024 / 1536"
           onClick={() => {
@@ -322,9 +322,9 @@ export default function LivingRoomPage() {
           type="button"
           aria-label="Books"
           className="pointer-events-auto"
-          left="0%"
-          top="50%"
-          width="34%"
+          left="2%"
+          top="52%"
+          width="22%"
           aspectRatio="1536 / 1024"
           onClick={() => {
             setZoomedItem({
@@ -347,9 +347,9 @@ export default function LivingRoomPage() {
           type="button"
           aria-label="Checklist"
           className="pointer-events-auto"
-          left="78%"
-          top="20%"
-          width="22%"
+          left="75%"
+          top="14%"
+          width="30%"
           aspectRatio="1536 / 1024"
           onClick={() => {
             setZoomedItem({
@@ -372,9 +372,9 @@ export default function LivingRoomPage() {
           type="button"
           aria-label="Sticky note"
           className="pointer-events-auto"
-          left="63%"
-          top="20%"
-          width="15%"
+          left="64%"
+          top="14%"
+          width="18%"
           aspectRatio="1024 / 1536"
           onClick={() => {
             setZoomedItem({
@@ -398,7 +398,7 @@ export default function LivingRoomPage() {
           aria-label="Stanford banner"
           className="pointer-events-auto"
           left="0%"
-          top="0%"
+          top="-5%"
           width="60%"
           aspectRatio="1536 / 1024"
           onClick={() => {

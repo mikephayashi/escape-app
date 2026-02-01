@@ -194,35 +194,35 @@ export default function WordyPage() {
 
   return (
     <main
-      className="screen-container relative flex flex-col items-center bg-cover bg-center"
+      className="screen-container relative flex flex-col items-center justify-between bg-cover bg-center py-4 pb-[max(1rem,env(safe-area-inset-bottom))]"
       style={{ backgroundImage: `url('/assets/scenes/speakeasy/Wood.png')` }}
     >
       {/* Wordy title at the top */}
-      <div className="flex justify-center pt-6">
+      <div className="flex shrink-0 justify-center">
         <Image
           src="/assets/scenes/speakeasy/Wordy.png"
           alt="Wordy"
-          width={220}
-          height={80}
-          className="h-auto w-auto max-w-[60%] object-contain drop-shadow-lg"
+          width={180}
+          height={60}
+          className="h-auto w-auto max-w-[50%] object-contain drop-shadow-lg"
           priority
         />
       </div>
 
       {/* Game Grid */}
-      <div className="mt-4 rounded-xl bg-[#4a3728] p-4 shadow-xl">
-        <div className="flex flex-col items-center gap-1.5">
+      <div className="my-2 shrink-0 rounded-xl bg-[#4a3728] p-3 shadow-xl">
+        <div className="flex flex-col items-center gap-1">
           {displayGrid.map((row, rowIndex) => (
           <div
             key={rowIndex}
-            className={`flex gap-1.5 ${
+            className={`flex gap-1 ${
               rowIndex === guesses.length && shake ? "animate-shake" : ""
             }`}
           >
             {row.map((tile, colIndex) => (
               <div
                 key={colIndex}
-                className={`flex h-14 w-14 items-center justify-center border-2 text-3xl font-bold uppercase transition-all duration-300 ${getTileStyle(
+                className={`flex h-12 w-12 items-center justify-center border-2 text-2xl font-bold uppercase transition-all duration-300 ${getTileStyle(
                   tile.state
                 )} ${tile.letter ? "scale-105" : ""}`}
                 style={{
@@ -240,30 +240,30 @@ export default function WordyPage() {
 
       {/* Result Message */}
       {showResultMessage && (
-        <div className="mt-4 rounded-xl bg-[#4a3728] px-6 py-4 text-center shadow-xl">
+        <div className="my-2 shrink-0 rounded-xl bg-[#4a3728] px-4 py-2 text-center shadow-xl">
           {won ? (
-            <p className="text-2xl text-green-400">You got it! Lager!</p>
+            <p className="text-xl text-green-400">You got it! Lager!</p>
           ) : (
-            <p className="text-xl text-red-400">Uh oh. You&apos;re out of guesses</p>
+            <p className="text-lg text-red-400">Uh oh. You&apos;re out of guesses</p>
           )}
         </div>
       )}
 
       {/* Keyboard */}
-      <div className="mt-auto mb-4 flex flex-col items-center gap-1.5 px-2">
+      <div className="flex shrink-0 flex-col items-center gap-1 px-1">
         {KEYBOARD_ROWS.map((row, rowIndex) => (
-          <div key={rowIndex} className="flex gap-1">
+          <div key={rowIndex} className="flex gap-0.5">
             {row.map((key) => (
               <button
                 key={key}
                 onClick={() => handleKeyPress(key)}
                 disabled={gameOver}
-                className={`flex h-14 items-center justify-center rounded font-bold uppercase transition-colors ${getKeyStyle(
+                className={`flex h-12 items-center justify-center rounded font-bold uppercase transition-colors ${getKeyStyle(
                   key
                 )} ${
                   key === "ENTER" || key === "⌫"
-                    ? "min-w-[65px] px-2 text-xs"
-                    : "min-w-[32px] text-lg"
+                    ? "min-w-[55px] px-1.5 text-xs"
+                    : "min-w-[28px] text-base"
                 } ${gameOver ? "opacity-50" : "active:scale-95"}`}
               >
                 {key}
