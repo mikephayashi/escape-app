@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense, useCallback } from "react";
+import { useState, useEffect, Suspense, useCallback, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import BillyDialog from "../components/BillyDialog";
@@ -49,6 +49,8 @@ function SpeakeasyInsideContent() {
   const [tiltAngle, setTiltAngle] = useState(0);
   const [hasTiltSupport, setHasTiltSupport] = useState<boolean | null>(null);
   const [tiltPermissionRequested, setTiltPermissionRequested] = useState(false);
+  // Smoothing ref for tilt
+  const smoothedTiltRef = useRef(0);
 
   const showDialogFn = ({
     key,
@@ -154,11 +156,17 @@ function SpeakeasyInsideContent() {
       
       // Calculate effective tilt - we want to detect when phone is tilted forward/sideways
       // like pouring a drink. Use gamma (side tilt) as primary pour indicator
-      const effectiveTilt = Math.abs(gamma ?? 0);
-      setTiltAngle(effectiveTilt);
+      const rawTilt = Math.abs(gamma ?? 0);
+      
+      // Smooth the tilt using exponential moving average (lower = smoother, higher = responsive)
+      const smoothingFactor = 0.15;
+      smoothedTiltRef.current = smoothedTiltRef.current + (rawTilt - smoothedTiltRef.current) * smoothingFactor;
+      const smoothedTilt = smoothedTiltRef.current;
+      
+      setTiltAngle(smoothedTilt);
       
       // Trigger completion when tilted past 45 degrees (opacity reaches 0)
-      if (effectiveTilt >= 45) {
+      if (smoothedTilt >= 45) {
         triggerPourComplete();
       }
     };
@@ -203,11 +211,17 @@ function SpeakeasyInsideContent() {
         if (permission === 'granted') {
           window.addEventListener('deviceorientation', (event: DeviceOrientationEvent) => {
             const gamma = event.gamma ?? 0;
-            const effectiveTilt = Math.abs(gamma);
-            setTiltAngle(effectiveTilt);
+            const rawTilt = Math.abs(gamma);
+            
+            // Smooth the tilt using exponential moving average
+            const smoothingFactor = 0.15;
+            smoothedTiltRef.current = smoothedTiltRef.current + (rawTilt - smoothedTiltRef.current) * smoothingFactor;
+            const smoothedTilt = smoothedTiltRef.current;
+            
+            setTiltAngle(smoothedTilt);
             
             // Trigger completion when tilted past 45 degrees
-            if (effectiveTilt >= 45) {
+            if (smoothedTilt >= 45) {
               triggerPourComplete();
             }
           });
@@ -386,8 +400,8 @@ function SpeakeasyInsideContent() {
                     priority
                   />
                 </div>
-                {/* Middle layer: Password number */}
-                <div className="absolute inset-0 flex items-center justify-center z-10">
+                {/* Middle layer: Password number (positioned to center in empty glass) */}
+                <div className="absolute inset-0 flex items-center justify-center z-10 translate-y-4">
                   <span className="text-4xl font-bold text-[#E3DFD9] drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">3451</span>
                 </div>
                 {/* Top layer: Full beer - opacity decreases as you tilt */}
