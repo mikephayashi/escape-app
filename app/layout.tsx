@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { UserProvider } from "./context/UserContext";
+import ChallengeOverlay from "./components/ChallengeOverlay";
 
 export const metadata: Metadata = {
   title: "Trichael's Wedding Bday Extravaganza",
@@ -73,6 +74,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         <UserProvider>
+          <ChallengeOverlay />
           {children}
         </UserProvider>
       </body>

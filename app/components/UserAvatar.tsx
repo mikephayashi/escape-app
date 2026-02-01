@@ -1,8 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useUser } from "../context/UserContext";
+import PhotoGallery from "./PhotoGallery";
 
 interface UserAvatarProps {
   className?: string;
@@ -11,12 +12,75 @@ interface UserAvatarProps {
 export default function UserAvatar({ className = "" }: UserAvatarProps) {
   const { userImage, userName, isConfirmed } = useUser();
   const [showModal, setShowModal] = useState(false);
+  const [showGallery, setShowGallery] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Only show avatar after user confirms their identity on the island page
   if (!userImage || !isConfirmed) return null;
 
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    setUploadStatus("");
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", "user-photos");
+      // Include username in the upload for reference
+      if (userName) {
+        formData.append("userName", userName);
+      }
+
+      const res = await fetch("/api/images/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setUploadStatus("✅ Photo uploaded!");
+        setTimeout(() => setUploadStatus(""), 2000);
+      } else {
+        setUploadStatus(`❌ ${data.error}`);
+      }
+    } catch (error) {
+      setUploadStatus("❌ Upload failed");
+    } finally {
+      setIsUploading(false);
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
+  const handleViewPhotos = () => {
+    setShowModal(false);
+    setShowGallery(true);
+  };
+
   return (
     <>
+      {/* Hidden file input for camera capture */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        onChange={handleFileChange}
+        className="hidden"
+      />
+
       <div
         className={`fixed left-3 top-3 z-50 cursor-pointer ${className}`}
         onClick={() => setShowModal(true)}
@@ -33,7 +97,7 @@ export default function UserAvatar({ className = "" }: UserAvatarProps) {
         </div>
       </div>
 
-      {/* Modal to display full image */}
+      {/* Modal with avatar and action buttons */}
       {showModal && (
         <div
           className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm"
@@ -63,8 +127,35 @@ export default function UserAvatar({ className = "" }: UserAvatarProps) {
                 {userName}
               </p>
             )}
+
+            {/* Status message */}
+            {uploadStatus && (
+              <p className="mt-2 text-center text-sm">{uploadStatus}</p>
+            )}
+
+            {/* Action buttons */}
+            <div className="mt-4 flex gap-3">
+              <button
+                onClick={handleUploadClick}
+                disabled={isUploading}
+                className="flex-1 rounded-xl bg-green-500 px-4 py-3 font-bold text-white shadow-md transition-all hover:bg-green-400 hover:scale-105 disabled:opacity-50"
+              >
+                {isUploading ? "📤 Uploading..." : "📷 Upload Image"}
+              </button>
+              <button
+                onClick={handleViewPhotos}
+                className="flex-1 rounded-xl bg-blue-500 px-4 py-3 font-bold text-white shadow-md transition-all hover:bg-blue-400 hover:scale-105"
+              >
+                🖼️ View Images
+              </button>
+            </div>
           </div>
         </div>
+      )}
+
+      {/* Photo Gallery Modal */}
+      {showGallery && (
+        <PhotoGallery onClose={() => setShowGallery(false)} />
       )}
     </>
   );
