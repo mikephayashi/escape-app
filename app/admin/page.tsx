@@ -1,11 +1,35 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
+const ADMIN_PASSWORD = 'Trichael123';
 
 export default function AdminPage() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const [status, setStatus] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [challengeActive, setChallengeActive] = useState(false);
+
+  // Check if already authenticated (stored in sessionStorage)
+  useEffect(() => {
+    const stored = sessionStorage.getItem('admin-auth');
+    if (stored === 'true') {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password === ADMIN_PASSWORD) {
+      setIsAuthenticated(true);
+      sessionStorage.setItem('admin-auth', 'true');
+      setPasswordError('');
+    } else {
+      setPasswordError('Incorrect password');
+    }
+  };
 
   const broadcast = async (eventType: string) => {
     setIsLoading(true);
@@ -24,7 +48,7 @@ export default function AdminPage() {
         setStatus(`✅ ${eventType === 'start-challenge' ? 'Challenge Started' : 'Challenge Stopped'}`);
         setChallengeActive(eventType === 'start-challenge');
       } else {
-        setStatus(`❌ Error: ${result.error}`);
+        setStatus(`❌ ${result.error}`);
       }
     } catch (error) {
       setStatus(`❌ Failed to send event`);
@@ -33,6 +57,40 @@ export default function AdminPage() {
     }
   };
 
+  // Password screen
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center p-8">
+        <div className="max-w-sm w-full">
+          <h1 className="text-3xl font-bold mb-8 text-center">🔐 Admin Access</h1>
+          
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter password"
+                className="w-full px-4 py-3 rounded-xl bg-gray-800 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-amber-400"
+                autoFocus
+              />
+              {passwordError && (
+                <p className="mt-2 text-red-400 text-sm">{passwordError}</p>
+              )}
+            </div>
+            <button
+              type="submit"
+              className="w-full py-3 bg-amber-500 hover:bg-amber-400 rounded-xl font-bold text-gray-900 transition-colors"
+            >
+              Enter
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
+  // Admin panel
   return (
     <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center p-8">
       <div className="max-w-md w-full text-center">
@@ -79,6 +137,17 @@ export default function AdminPage() {
         <p className="mt-8 text-gray-500 text-sm">
           Starting a challenge will block all player screens until stopped.
         </p>
+
+        {/* Logout button */}
+        <button
+          onClick={() => {
+            sessionStorage.removeItem('admin-auth');
+            setIsAuthenticated(false);
+          }}
+          className="mt-8 text-gray-500 text-sm hover:text-gray-300 underline"
+        >
+          Logout
+        </button>
       </div>
     </div>
   );
