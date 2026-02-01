@@ -4,6 +4,25 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Escape App",
   description: "An escape room adventure game",
+  openGraph: {
+    title: "Escape App",
+    description: "An escape room adventure game",
+    images: [
+      {
+        url: "/assets/shared/characters/trichael-wedding.png",
+        width: 1200,
+        height: 630,
+        alt: "Escape App",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Escape App",
+    description: "An escape room adventure game",
+    images: ["/assets/shared/characters/trichael-wedding.png"],
+  },
 };
 
 export const viewport: Viewport = {
