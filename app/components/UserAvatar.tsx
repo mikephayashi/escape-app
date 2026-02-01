@@ -8,9 +8,10 @@ interface UserAvatarProps {
 }
 
 export default function UserAvatar({ className = "" }: UserAvatarProps) {
-  const { userImage, userName } = useUser();
+  const { userImage, userName, isConfirmed } = useUser();
 
-  if (!userImage) return null;
+  // Only show avatar after user confirms their identity on the island page
+  if (!userImage || !isConfirmed) return null;
 
   return (
     <div
@@ -29,5 +30,3 @@ export default function UserAvatar({ className = "" }: UserAvatarProps) {
     </div>
   );
 }
-
-

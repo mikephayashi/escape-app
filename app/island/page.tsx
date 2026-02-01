@@ -6,6 +6,7 @@ import Image from "next/image";
 import BillyDialog from "../components/BillyDialog";
 import DialogBox from "../components/DialogBox";
 import NextButton from "../components/NextButton";
+import UserAvatar from "../components/UserAvatar";
 import { useUser } from "../context/UserContext";
 
 // Map names to user images
@@ -144,6 +145,7 @@ export default function IslandPage() {
       style={{ backgroundImage: `url('${backgroundImage}')` }}
       onPointerDown={handleScreenTap}
     >
+      <UserAvatar />
       <div className="mx-auto flex h-full w-full max-w-md flex-col items-center overflow-y-auto px-4 pt-16">
         {stage === "greeting" && getUserImage(name) ? (
           <>
