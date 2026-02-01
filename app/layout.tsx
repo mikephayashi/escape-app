@@ -3,7 +3,7 @@ import "./globals.css";
 import { UserProvider } from "./context/UserContext";
 
 export const metadata: Metadata = {
-  title: "Escape App",
+  title: "Trichael's Wedding Bday Extravaganza",
   description: "An escape room adventure game",
   openGraph: {
     title: "Trichael's Joint Wedding Bday Extravaganza",
