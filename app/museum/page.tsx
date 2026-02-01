@@ -308,7 +308,7 @@ export default function MuseumPage() {
               });
               showDialog({
                 key: "paper-trash",
-                text: "A crumpled piece of paper. Maybe there's something written on it?",
+                text: "A crumpled piece of paper. It says A=1, B=2, C=3...",
               });
             }}
           />
