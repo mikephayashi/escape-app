@@ -181,9 +181,13 @@ export default function LivingRoomPage() {
             <Image
               src={zoomedItem.src}
               alt={zoomedItem.alt}
-              width={176}
-              height={176}
-              className="h-auto max-h-44 w-auto max-w-44 object-contain"
+              width={zoomedItem.alt === "Sticky note" ? 352 : 176}
+              height={zoomedItem.alt === "Sticky note" ? 352 : 176}
+              className={`h-auto w-auto object-contain ${
+                zoomedItem.alt === "Sticky note"
+                  ? "max-h-[352px] max-w-[352px]"
+                  : "max-h-44 max-w-44"
+              }`}
               priority
             />
           </div>
