@@ -157,8 +157,8 @@ function SpeakeasyInsideContent() {
       const effectiveTilt = Math.abs(gamma ?? 0);
       setTiltAngle(effectiveTilt);
       
-      // Trigger completion when tilted past 60 degrees (opacity reaches 0)
-      if (effectiveTilt >= 60) {
+      // Trigger completion when tilted past 45 degrees (opacity reaches 0)
+      if (effectiveTilt >= 45) {
         triggerPourComplete();
       }
     };
@@ -206,8 +206,8 @@ function SpeakeasyInsideContent() {
             const effectiveTilt = Math.abs(gamma);
             setTiltAngle(effectiveTilt);
             
-            // Trigger completion when tilted past 60 degrees
-            if (effectiveTilt >= 60) {
+            // Trigger completion when tilted past 45 degrees
+            if (effectiveTilt >= 45) {
               triggerPourComplete();
             }
           });
@@ -370,35 +370,43 @@ function SpeakeasyInsideContent() {
               <div 
                 className="relative flex items-center justify-center transition-transform duration-100"
                 style={{
+                  width: 200,
+                  height: 300,
                   transform: `rotate(${Math.min(tiltAngle * 2, 90)}deg)`
                 }}
               >
-                {/* Bottom layer: Empty beer */}
-                <Image
-                  src="/assets/scenes/speakeasy/Empty%20Beer.png"
-                  alt="Empty Lager"
-                  width={168}
-                  height={252}
-                  className="h-auto w-auto object-contain max-h-[252px] max-w-[168px]"
-                  priority
-                />
+                {/* Bottom layer: Empty beer (15% smaller, shifted right and down) */}
+                <div className="absolute inset-0 flex items-center justify-center translate-x-2 translate-y-3">
+                  <Image
+                    src="/assets/scenes/speakeasy/Empty%20Beer.png"
+                    alt="Empty Lager"
+                    width={143}
+                    height={216}
+                    className="object-contain"
+                    priority
+                  />
+                </div>
                 {/* Middle layer: Password number */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-4xl font-bold text-[#E3DFD9]">3451</span>
+                <div className="absolute inset-0 flex items-center justify-center z-10">
+                  <span className="text-4xl font-bold text-[#E3DFD9] drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">3451</span>
                 </div>
                 {/* Top layer: Full beer - opacity decreases as you tilt */}
-                <Image
-                  src="/assets/scenes/speakeasy/Beer.png"
-                  alt="Lager"
-                  width={168}
-                  height={252}
-                  className="absolute inset-0 h-auto w-auto object-contain max-h-[252px] max-w-[168px] transition-opacity duration-150"
+                <div 
+                  className="absolute inset-0 flex items-center justify-center z-20 transition-opacity duration-150"
                   style={{
-                    // Opacity goes from 1 to 0 as tiltAngle goes from 0 to 60
-                    opacity: Math.max(0, 1 - (tiltAngle / 60))
+                    // Opacity goes from 1 to 0 as tiltAngle goes from 0 to 45
+                    opacity: Math.max(0, 1 - (tiltAngle / 45))
                   }}
-                  priority
-                />
+                >
+                  <Image
+                    src="/assets/scenes/speakeasy/Beer.png"
+                    alt="Lager"
+                    width={168}
+                    height={252}
+                    className="object-contain"
+                    priority
+                  />
+                </div>
               </div>
             ) : (
               /* Normal zoomed item display for other states */
