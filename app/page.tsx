@@ -83,7 +83,7 @@ export default function Home() {
       {/* Start Button - only clickable after audio acknowledged */}
       <button 
         onClick={handleStartGame}
-        className={!audioAcknowledged ? "pointer-events-none opacity-50" : ""}
+        className={`mb-[10vh] w-[70vw] ${!audioAcknowledged ? "pointer-events-none opacity-50" : ""}`}
         disabled={!audioAcknowledged}
       >
         <Image
@@ -91,6 +91,7 @@ export default function Home() {
           alt="Start Game"
           width={600}
           height={200}
+          className="h-auto w-full"
           priority
         />
       </button>

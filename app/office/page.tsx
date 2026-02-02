@@ -114,7 +114,7 @@ export default function OfficePage() {
       {/* Office items - display layer */}
       <div className="pointer-events-none absolute inset-0 z-0">
         {/* Computer on desk */}
-        <PositionedItem left="15%" top="55%" width="50%" aspectRatio="1024 / 1024">
+        <PositionedItem left="15%" top="50%" width="50%" aspectRatio="1024 / 1024">
           <Image
             src="/assets/scenes/office/Computer.png"
             alt="Computer"
@@ -125,7 +125,7 @@ export default function OfficePage() {
         </PositionedItem>
 
         {/* Microphone on desk */}
-        <PositionedItem left="20%" top="30%" width="70%" aspectRatio="1024 / 1024">
+        <PositionedItem left="20%" top="20%" width="70%" aspectRatio="1024 / 1024">
           <Image
             src="/assets/scenes/office/Microphone.png"
             alt="Microphone"
@@ -136,7 +136,7 @@ export default function OfficePage() {
         </PositionedItem>
 
         {/* Drink on desk */}
-        <PositionedItem left="60%" top="45%" width="45%" aspectRatio="1024 / 1024">
+        <PositionedItem left="55%" top="45%" width="45%" aspectRatio="1024 / 1024">
           <Image
             src="/assets/scenes/office/Drink.png"
             alt="Drink"
@@ -314,14 +314,14 @@ export default function OfficePage() {
       {/* Clickable item overlays - only show when not zoomed */}
       {!zoomedItem ? (
         <div className="absolute inset-0 z-10">
-          {/* Computer button */}
+          {/* Computer - matches display: left="15%" top="50%" width="50%" */}
           <PositionedItem
             as="button"
             type="button"
             aria-label="Computer"
             className="pointer-events-auto"
             left="15%"
-            top="55%"
+            top="50%"
             width="50%"
             aspectRatio="1024 / 1024"
             onClick={() => {
@@ -348,14 +348,14 @@ export default function OfficePage() {
             }}
           />
 
-          {/* Microphone button */}
+          {/* Microphone - matches display: left="20%" top="20%" width="70%" */}
           <PositionedItem
             as="button"
             type="button"
             aria-label="Microphone"
             className="pointer-events-auto"
             left="20%"
-            top="30%"
+            top="20%"
             width="70%"
             aspectRatio="1024 / 1024"
             onClick={() => {
@@ -371,13 +371,13 @@ export default function OfficePage() {
             }}
           />
 
-          {/* Drink button */}
+          {/* Drink - matches display: left="55%" top="45%" width="45%" */}
           <PositionedItem
             as="button"
             type="button"
             aria-label="Drink"
             className="pointer-events-auto"
-            left="60%"
+            left="55%"
             top="45%"
             width="45%"
             aspectRatio="1024 / 1024"

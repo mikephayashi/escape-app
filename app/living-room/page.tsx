@@ -100,7 +100,7 @@ export default function LivingRoomPage() {
         />
       ) : null}
       <div className="pointer-events-none absolute inset-0 z-0">
-        <PositionedItem left="0%" top="-5%" width="60%" aspectRatio="1536 / 1024">
+        <PositionedItem left="0%" top="0%" width="70%" aspectRatio="1536 / 1024">
           <Image
             src="/assets/scenes/living-room/Stanford%20Banner.png"
             alt="Stanford banner"
@@ -110,7 +110,7 @@ export default function LivingRoomPage() {
             priority
           />
         </PositionedItem>
-        <PositionedItem left="25%" top="14%" width="20%" aspectRatio="1024 / 1536">
+        <PositionedItem left="25%" top="18%" width="20%" aspectRatio="1024 / 1536">
           <Image
             src="/assets/scenes/living-room/Miffy.png"
             alt="Miffy poster"
@@ -119,7 +119,7 @@ export default function LivingRoomPage() {
             className="object-contain"
           />
         </PositionedItem>
-        <PositionedItem left="75%" top="14%" width="30%" aspectRatio="1536 / 1024">
+        <PositionedItem left="75%" top="18%" width="30%" aspectRatio="1536 / 1024">
           <Image
             src="/assets/scenes/living-room/Checlist.png"
             alt="Checklist"
@@ -128,7 +128,7 @@ export default function LivingRoomPage() {
             className="object-contain"
           />
         </PositionedItem>
-        <PositionedItem left="64%" top="14%" width="18%" aspectRatio="1024 / 1536">
+        <PositionedItem left="64%" top="18%" width="18%" aspectRatio="1024 / 1536">
           <Image
             src="/assets/scenes/living-room/Sticky%20Note.png"
             alt="Sticky note"
@@ -137,7 +137,7 @@ export default function LivingRoomPage() {
             className="object-contain"
           />
         </PositionedItem>
-        <PositionedItem left="70%" top="27%" width="28%" aspectRatio="1024 / 1536">
+        <PositionedItem left="70%" top="30%" width="28%" aspectRatio="1024 / 1536">
           <Image
             src="/assets/scenes/living-room/Computer.png"
             alt="Computer"
@@ -297,13 +297,40 @@ export default function LivingRoomPage() {
         </PositionedItem>
       ) : null}
       <div className="absolute inset-0 z-10">
+        {/* Stanford Banner - matches display: left="0%" top="0%" width="70%" */}
+        <PositionedItem
+          as="button"
+          type="button"
+          aria-label="Stanford banner"
+          className="pointer-events-auto"
+          left="0%"
+          top="0%"
+          width="70%"
+          aspectRatio="1536 / 1024"
+          onClick={() => {
+            setZoomedItem({
+              src: "/assets/scenes/living-room/Stanford%20Banner.png",
+              alt: "Stanford banner",
+              aspectRatio: "1536 / 1024",
+            });
+            showDialog({
+              key: "banner",
+              text: "A Stanford banner. Cute. Go Cardinals I guess.",
+              showBilly: false,
+              showBackground: true,
+              useTypewriter: false,
+              speaker: "",
+            });
+          }}
+        />
+        {/* Miffy - matches display: left="25%" top="18%" width="20%" */}
         <PositionedItem
           as="button"
           type="button"
           aria-label="Miffy poster"
           className="pointer-events-auto"
           left="25%"
-          top="14%"
+          top="18%"
           width="20%"
           aspectRatio="1024 / 1536"
           onClick={() => {
@@ -314,7 +341,7 @@ export default function LivingRoomPage() {
             });
             showDialog({
               key: "miffy",
-              text: "Image of Miffy. Looks cute though. Let’s look at more things in the room.",
+              text: "Image of Miffy. Looks cute though. Let's look at more things in the room.",
               showBilly: false,
               showBackground: true,
               useTypewriter: false,
@@ -322,13 +349,66 @@ export default function LivingRoomPage() {
             });
           }}
         />
+        {/* Checklist - matches display: left="75%" top="18%" width="30%" */}
+        <PositionedItem
+          as="button"
+          type="button"
+          aria-label="Checklist"
+          className="pointer-events-auto"
+          left="75%"
+          top="18%"
+          width="30%"
+          aspectRatio="1536 / 1024"
+          onClick={() => {
+            setZoomedItem({
+              src: "/assets/scenes/living-room/Checlist.png",
+              alt: "Checklist",
+              aspectRatio: "1536 / 1024",
+            });
+            showDialog({
+              key: "checklist",
+              text: "A piece of paper. Just junk.",
+              showBilly: false,
+              showBackground: true,
+              useTypewriter: false,
+              speaker: "",
+            });
+          }}
+        />
+        {/* Sticky Note - matches display: left="64%" top="18%" width="18%" */}
+        <PositionedItem
+          as="button"
+          type="button"
+          aria-label="Sticky note"
+          className="pointer-events-auto"
+          left="64%"
+          top="18%"
+          width="18%"
+          aspectRatio="1024 / 1536"
+          onClick={() => {
+            setZoomedItem({
+              src: "/assets/scenes/living-room/Sticky%20Note.png",
+              alt: "Sticky note",
+              aspectRatio: "1024 / 1536",
+            });
+            showDialog({
+              key: "sticky-note",
+              text: "An important note.  I wonder what this could mean. Keep looking for clues! ",
+              showBilly: false,
+              showBackground: true,
+              useTypewriter: false,
+              speaker: "",
+            });
+          }}
+        />
+        {/* Computer - matches display: left="70%" top="30%" width="28%" */}
         <PositionedItem
           as="button"
           type="button"
           aria-label="Computer"
           className="pointer-events-auto"
           left="70%"
-          top="27%"
+          top="30%"
           width="28%"
           aspectRatio="1024 / 1536"
           onClick={() => {
@@ -347,6 +427,7 @@ export default function LivingRoomPage() {
             });
           }}
         />
+        {/* Books - matches display: left="2%" top="52%" width="22%" */}
         <PositionedItem
           as="button"
           type="button"
@@ -372,81 +453,7 @@ export default function LivingRoomPage() {
             });
           }}
         />
-        <PositionedItem
-          as="button"
-          type="button"
-          aria-label="Checklist"
-          className="pointer-events-auto"
-          left="75%"
-          top="14%"
-          width="30%"
-          aspectRatio="1536 / 1024"
-          onClick={() => {
-            setZoomedItem({
-              src: "/assets/scenes/living-room/Checlist.png",
-              alt: "Checklist",
-              aspectRatio: "1536 / 1024",
-            });
-            showDialog({
-              key: "checklist",
-              text: "A piece of paper. Just junk.",
-              showBilly: false,
-              showBackground: true,
-              useTypewriter: false,
-              speaker: "",
-            });
-          }}
-        />
-        <PositionedItem
-          as="button"
-          type="button"
-          aria-label="Sticky note"
-          className="pointer-events-auto"
-          left="64%"
-          top="14%"
-          width="18%"
-          aspectRatio="1024 / 1536"
-          onClick={() => {
-            setZoomedItem({
-              src: "/assets/scenes/living-room/Sticky%20Note.png",
-              alt: "Sticky note",
-              aspectRatio: "1024 / 1536",
-            });
-            showDialog({
-              key: "sticky-note",
-              text: "An important note.  I wonder what this could mean. Keep looking for clues! ",
-              showBilly: false,
-              showBackground: true,
-              useTypewriter: false,
-              speaker: "",
-            });
-          }}
-        />
-        <PositionedItem
-          as="button"
-          type="button"
-          aria-label="Stanford banner"
-          className="pointer-events-auto"
-          left="0%"
-          top="-5%"
-          width="60%"
-          aspectRatio="1536 / 1024"
-          onClick={() => {
-            setZoomedItem({
-              src: "/assets/scenes/living-room/Stanford%20Banner.png",
-              alt: "Stanford banner",
-              aspectRatio: "1536 / 1024",
-            });
-            showDialog({
-              key: "banner",
-              text: "A Stanford banner. Cute. Go Cardinals I guess.",
-              showBilly: false,
-              showBackground: true,
-              useTypewriter: false,
-              speaker: "",
-            });
-          }}
-        />
+        {/* Safe - matches display: left="62%" top="48%" width="13%" */}
         <PositionedItem
           as="button"
           type="button"

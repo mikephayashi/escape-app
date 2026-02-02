@@ -149,7 +149,7 @@ export default function NooksCrannyInsidePage() {
       >
         {/* Background items layer - non-interactive */}
         <div className="pointer-events-none absolute inset-0 z-0">
-          <PositionedItem left="-10%" top="18%" width="60%" aspectRatio="1024 / 1024">
+          <PositionedItem left="-10%" top="12%" width="60%" aspectRatio="1024 / 1024">
             <Image
               src="/assets/scenes/nooks-cranny/Weights.png"
               alt="Weights"
@@ -159,7 +159,7 @@ export default function NooksCrannyInsidePage() {
               priority
             />
           </PositionedItem>
-          <PositionedItem left="38%" top="25%" width="30%" aspectRatio="1024 / 1024">
+          <PositionedItem left="38%" top="23%" width="30%" aspectRatio="1024 / 1024">
             <Image
               src="/assets/scenes/nooks-cranny/Bear.png"
               alt="Pink Bear"
@@ -168,7 +168,7 @@ export default function NooksCrannyInsidePage() {
               className="object-contain"
             />
           </PositionedItem>
-          <PositionedItem left="62%" top="25%" width="40%" aspectRatio="1024 / 1024">
+          <PositionedItem left="60%" top="20%" width="40%" aspectRatio="1024 / 1024">
             <Image
               src="/assets/scenes/nooks-cranny/Computer.png"
               alt="Computer"
@@ -254,13 +254,14 @@ export default function NooksCrannyInsidePage() {
 
         {/* Clickable item buttons */}
         <div className="absolute inset-0 z-10">
+          {/* Weights - matches display: left="-10%" top="12%" width="60%" */}
           <PositionedItem
             as="button"
             type="button"
             aria-label="Weights"
             className="pointer-events-auto"
             left="-10%"
-            top="18%"
+            top="12%"
             width="60%"
             aspectRatio="1024 / 1024"
             onClick={() =>
@@ -275,13 +276,14 @@ export default function NooksCrannyInsidePage() {
               )
             }
           />
+          {/* Bear - matches display: left="38%" top="23%" width="30%" */}
           <PositionedItem
             as="button"
             type="button"
             aria-label="Pink Bear"
             className="pointer-events-auto"
             left="38%"
-            top="25%"
+            top="23%"
             width="30%"
             aspectRatio="1024 / 1024"
             onClick={() =>
@@ -296,13 +298,14 @@ export default function NooksCrannyInsidePage() {
               )
             }
           />
+          {/* Computer - matches display: left="60%" top="20%" width="40%" */}
           <PositionedItem
             as="button"
             type="button"
             aria-label="Computer"
             className="pointer-events-auto"
-            left="62%"
-            top="25%"
+            left="60%"
+            top="20%"
             width="40%"
             aspectRatio="1024 / 1024"
             onClick={handleComputerClick}

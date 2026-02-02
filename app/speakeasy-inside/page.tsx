@@ -476,7 +476,7 @@ function SpeakeasyInsideContent() {
       >
       {/* Decorative items layer */}
       <div className="pointer-events-none absolute inset-0 z-0">
-        <PositionedItem left="25%" top="0%" width="30%" aspectRatio="1024 / 1536">
+        <PositionedItem left="20%" top="0%" width="30%" aspectRatio="1024 / 1536">
           <Image
             src="/assets/scenes/speakeasy/Light.png"
             alt="Light"
@@ -486,7 +486,7 @@ function SpeakeasyInsideContent() {
             priority
           />
         </PositionedItem>
-        <PositionedItem left="35%" top="55%" width="40%" aspectRatio="1024 / 1536">
+        <PositionedItem left="35%" top="55%" width="35%" aspectRatio="1024 / 1536">
           <Image
             src="/assets/scenes/speakeasy/Chair.png"
             alt="Chair"
@@ -495,7 +495,7 @@ function SpeakeasyInsideContent() {
             className="object-contain"
           />
         </PositionedItem>
-        <PositionedItem left="25%" top="37%" width="20%" aspectRatio="1024 / 1536">
+        <PositionedItem left="25%" top="36%" width="18%" aspectRatio="1024 / 1536">
           <Image
             src="/assets/scenes/speakeasy/Beer.png"
             alt="Beer"
@@ -640,12 +640,13 @@ function SpeakeasyInsideContent() {
       {/* Clickable item overlays - only show when not zoomed and no wordy result */}
       {!zoomedItem && !wordyResult ? (
         <div className="absolute inset-0 z-10">
+          {/* Light - matches display: left="20%" top="0%" width="30%" */}
           <PositionedItem
             as="button"
             type="button"
             aria-label="Light"
             className="pointer-events-auto"
-            left="25%"
+            left="20%"
             top="0%"
             width="30%"
             aspectRatio="1024 / 1536"
@@ -665,6 +666,7 @@ function SpeakeasyInsideContent() {
               });
             }}
           />
+          {/* Chair - matches display: left="35%" top="55%" width="35%" */}
           <PositionedItem
             as="button"
             type="button"
@@ -672,7 +674,7 @@ function SpeakeasyInsideContent() {
             className="pointer-events-auto"
             left="35%"
             top="55%"
-            width="40%"
+            width="35%"
             aspectRatio="1024 / 1536"
             onClick={() => {
               setZoomedItem({
@@ -690,14 +692,15 @@ function SpeakeasyInsideContent() {
               });
             }}
           />
+          {/* Beer - matches display: left="25%" top="36%" width="18%" */}
           <PositionedItem
             as="button"
             type="button"
             aria-label="Beer"
             className="pointer-events-auto"
             left="25%"
-            top="37%"
-            width="20%"
+            top="36%"
+            width="18%"
             aspectRatio="1024 / 1536"
             onClick={() => {
               setZoomedItem({
@@ -715,6 +718,7 @@ function SpeakeasyInsideContent() {
               });
             }}
           />
+          {/* Napkin - matches display: left="5%" top="42%" width="20%" */}
           <PositionedItem
             as="button"
             type="button"
