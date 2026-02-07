@@ -225,7 +225,7 @@ export default function IslandPage() {
             {!hasUploadedPhoto && !uploadFailed && (
               <div className="fixed left-16 top-3 z-[60] animate-pulse">
                 <div className="flex items-center">
-                  <span className="text-5xl drop-shadow-lg">👆</span>
+                  <span className="text-5xl drop-shadow-lg">👈</span>
                   <span 
                     className="ml-1 rounded-lg bg-amber-400 px-3 py-1 text-sm font-bold text-amber-900 shadow-lg"
                     style={{ fontFamily: "FinkHeavy, sans-serif" }}
