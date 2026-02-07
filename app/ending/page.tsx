@@ -17,7 +17,6 @@ const SCENE_IMAGES = [
   "/assets/scenes/Ending/Ticket.png",
   "/assets/scenes/Ending/Invitation.png",
   "/assets/scenes/nooks-cranny/Apple.png",
-  "/assets/shared/characters/trichael-wedding.png",
 ];
 
 type Stage =
@@ -173,27 +172,25 @@ export default function EndingPage() {
           </div>
         )}
 
-        {showDialog && (
+        {showDialog && stage !== "trichael" && (
           <DialogBox
             text={getDialogText()}
             speaker={getSpeaker()}
             useTypewriter={true}
             className="mt-6 max-w-sm"
             onDialogClick={handleDialogDismiss}
-            characterImage={
-              stage === "trichael"
-                ? {
-                    src: "/assets/shared/characters/trichael-wedding.png",
-                    alt: "Trichael",
-                    width: 220,
-                    height: 220,
-                    className: "h-auto w-44 object-contain",
-                    isVisible: true,
-                    priority: true,
-                  }
-                : undefined
-            }
           />
+        )}
+
+        {stage === "trichael" && (
+          <div className="fixed inset-0 z-20 flex items-center justify-center bg-black">
+            <video
+              src="/assets/videos/Wedding_ending.mp4"
+              autoPlay
+              controls
+              className="h-full w-full object-contain"
+            />
+          </div>
         )}
 
         {stage === "plane" && (
