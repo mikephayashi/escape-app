@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import DialogBox from "../components/DialogBox";
 import BillyDialog from "../components/BillyDialog";
@@ -23,6 +24,9 @@ const SCENE_IMAGES = [
 ];
 
 export default function MuseumPage() {
+  const router = useRouter();
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlayingVideo, setIsPlayingVideo] = useState(false);
   const [zoomedItem, setZoomedItem] = useState<{
     src: string;
     alt: string;
@@ -354,9 +358,31 @@ export default function MuseumPage() {
         <>
           {/* Overlay to block clicks on everything except the next button */}
           <div className="pointer-events-auto absolute inset-0 z-[25]" />
-          <NextButton href="/speakeasy-entrance" className="z-30" />
+          <NextButton
+            onClick={() => {
+              setIsPlayingVideo(true);
+              setTimeout(() => {
+                videoRef.current?.play();
+              }, 100);
+            }}
+            className="z-30"
+          />
         </>
       ) : null}
+
+      {/* Video overlay - plays call.mp4 before navigating to speakeasy entrance */}
+      {isPlayingVideo && (
+        <div className="absolute inset-0 z-[100] flex items-center justify-center bg-black">
+          <video
+            ref={videoRef}
+            src="/assets/videos/call.mp4"
+            className="h-full w-full object-contain"
+            onEnded={() => router.push("/speakeasy-entrance")}
+            playsInline
+            autoPlay
+          />
+        </div>
+      )}
       </SceneContainer>
     </main>
     </SceneLoader>
