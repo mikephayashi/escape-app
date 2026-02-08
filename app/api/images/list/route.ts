@@ -12,7 +12,7 @@ const userImageMap: Record<string, string> = {
   caeden: "/assets/shared/users/Caeden.png",
   "canadian derek": "/assets/shared/users/Canadian Derek.png",
   carina: "/assets/shared/users/Carina.png",
-  charlie: "/assets/shared/users/Charlie.png",
+  garrett: "/assets/shared/users/Garrett.png",
   dennis: "/assets/shared/users/Dennis.png",
   esha: "/assets/shared/users/Esha.png",
   freda: "/assets/shared/users/Freda.png",

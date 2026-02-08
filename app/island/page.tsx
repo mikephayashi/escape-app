@@ -26,7 +26,7 @@ const SCENE_IMAGES = [
   "/assets/shared/users/Caeden.png",
   "/assets/shared/users/Canadian Derek.png",
   "/assets/shared/users/Carina.png",
-  "/assets/shared/users/Charlie.png",
+  "/assets/shared/users/Garrett.png",
   "/assets/shared/users/Dennis.png",
   "/assets/shared/users/Esha.png",
   "/assets/shared/users/Freda.png",
@@ -61,7 +61,7 @@ const userImageMap: Record<string, string> = {
   caeden: "/assets/shared/users/Caeden.png",
   "canadian derek": "/assets/shared/users/Canadian Derek.png",
   carina: "/assets/shared/users/Carina.png",
-  charlie: "/assets/shared/users/Charlie.png",
+  garrett: "/assets/shared/users/Garrett.png",
   dennis: "/assets/shared/users/Dennis.png",
   esha: "/assets/shared/users/Esha.png",
   freda: "/assets/shared/users/Freda.png",
@@ -86,7 +86,7 @@ const userImageMap: Record<string, string> = {
 };
 
 // Map names to gender
-const boyNames = ["alex", "american derek", "brandon", "brian", "caeden", "canadian derek", "charlie", "dennis", "goodman", "grant", "israel", "jj", "josh", "matt", "newt", "rishabh", "sid", "steven", "wayne"];
+const boyNames = ["alex", "american derek", "brandon", "brian", "caeden", "canadian derek", "garrett", "dennis", "goodman", "grant", "israel", "jj", "josh", "matt", "newt", "rishabh", "sid", "steven", "wayne"];
 const girlNames = ["anastasia", "ariella", "carina", "esha", "freda", "jenn", "jillian", "joy", "kana", "melayna", "sandra", "suhavi"];
 
 function getUserImage(name: string): string | null {
