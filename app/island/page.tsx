@@ -32,14 +32,17 @@ const SCENE_IMAGES = [
   "/assets/shared/users/Freda.png",
   "/assets/shared/users/Goodman.png",
   "/assets/shared/users/Grant.png",
+  "/assets/shared/users/Grant Moody.png",
   "/assets/shared/users/Israel.png",
   "/assets/shared/users/JJ.png",
   "/assets/shared/users/Jenn.png",
+  "/assets/shared/users/Jennifer.png",
   "/assets/shared/users/Jillian.png",
   "/assets/shared/users/Josh.png",
   "/assets/shared/users/Joy.png",
   "/assets/shared/users/Kana.png",
   "/assets/shared/users/Matt.png",
+  "/assets/shared/users/Matthew.png",
   "/assets/shared/users/Melayna.png",
   "/assets/shared/users/Newt.png",
   "/assets/shared/users/Rishabh.png",
@@ -48,6 +51,7 @@ const SCENE_IMAGES = [
   "/assets/shared/users/Steven.png",
   "/assets/shared/users/Suhavi.png",
   "/assets/shared/users/Wayne.png",
+  "/assets/shared/users/Will.png",
 ];
 
 // Map names to user images
@@ -67,14 +71,17 @@ const userImageMap: Record<string, string> = {
   freda: "/assets/shared/users/Freda.png",
   goodman: "/assets/shared/users/Goodman.png",
   grant: "/assets/shared/users/Grant.png",
+  "grant moody": "/assets/shared/users/Grant Moody.png",
   israel: "/assets/shared/users/Israel.png",
   jj: "/assets/shared/users/JJ.png",
   jenn: "/assets/shared/users/Jenn.png",
+  jennifer: "/assets/shared/users/Jennifer.png",
   jillian: "/assets/shared/users/Jillian.png",
   josh: "/assets/shared/users/Josh.png",
   joy: "/assets/shared/users/Joy.png",
   kana: "/assets/shared/users/Kana.png",
   matt: "/assets/shared/users/Matt.png",
+  matthew: "/assets/shared/users/Matthew.png",
   melayna: "/assets/shared/users/Melayna.png",
   newt: "/assets/shared/users/Newt.png",
   rishabh: "/assets/shared/users/Rishabh.png",
@@ -83,11 +90,12 @@ const userImageMap: Record<string, string> = {
   steven: "/assets/shared/users/Steven.png",
   suhavi: "/assets/shared/users/Suhavi.png",
   wayne: "/assets/shared/users/Wayne.png",
+  will: "/assets/shared/users/Will.png",
 };
 
 // Map names to gender
-const boyNames = ["alex", "american derek", "brandon", "brian", "caeden", "canadian derek", "garrett", "dennis", "goodman", "grant", "israel", "jj", "josh", "matt", "newt", "rishabh", "sid", "steven", "wayne"];
-const girlNames = ["anastasia", "ariella", "carina", "esha", "freda", "jenn", "jillian", "joy", "kana", "melayna", "sandra", "suhavi"];
+const boyNames = ["alex", "american derek", "brandon", "brian", "caeden", "canadian derek", "garrett", "dennis", "goodman", "grant", "grant moody", "israel", "jj", "josh", "matt", "matthew", "newt", "rishabh", "sid", "steven", "wayne", "will"];
+const girlNames = ["anastasia", "ariella", "carina", "esha", "freda", "jenn", "jennifer", "jillian", "joy", "kana", "melayna", "sandra", "suhavi"];
 
 function getUserImage(name: string): string | null {
   const lowerName = name.toLowerCase().trim();
